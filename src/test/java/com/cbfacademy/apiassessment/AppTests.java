@@ -1,5 +1,33 @@
 package com.cbfacademy.apiassessment;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,7 +37,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-// import org.springframework.asm.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -38,32 +65,8 @@ import com.cbfacademy.apiassessment.exceptions.WatchlistProcessingException;
 import com.cbfacademy.apiassessment.model.Watchlist;
 import com.cbfacademy.apiassessment.service.WatchlistServiceImpl;
 import com.fasterxml.jackson.core.exc.StreamWriteException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest(classes = App.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -179,11 +182,15 @@ class AppTests {
 		sampleEntry.setSymbol("AAPL");
 		sampleEntry.setCurrency("USD");
 		sampleEntry.setDatePurchased(LocalDate.now());
+		
+		BigDecimal purchasePrice = BigDecimal.valueOf(76.7);
+		BigDecimal currentPrice = BigDecimal.valueOf(69.8);
 		sampleEntry.setWantsVolStock(2340);
 		sampleEntry.setOwnsVolStock(2110);
-		sampleEntry.setPurchasePrice(76.7);
-		sampleEntry.setCurrentPrice(69.8);
-		sampleEntry.setProfit(0);
+		
+		sampleEntry.setPurchasePrice(purchasePrice);
+		sampleEntry.setCurrentPrice(currentPrice);
+		sampleEntry.setProfit(BigDecimal.ZERO); // Use BigDecimal.ZERO for zero value
 		sampleEntry.setPointsChange(0);
 		sampleEntry.setOpen(354.2);
 		sampleEntry.setClose(234.0);
@@ -222,9 +229,12 @@ class AppTests {
 			sampleEntry.setDatePurchased(LocalDate.now());
 			sampleEntry.setWantsVolStock(2340);
 			sampleEntry.setOwnsVolStock(2110);
-			sampleEntry.setPurchasePrice(76.7);
-			sampleEntry.setCurrentPrice(69.8);
-			sampleEntry.setProfit(0);
+			BigDecimal purchasePrice = BigDecimal.valueOf(76.7);
+			BigDecimal currentPrice = BigDecimal.valueOf(69.8);
+			sampleEntry.setProfit(BigDecimal.ZERO);
+			// sampleEntry.setPurchasePrice(76.70);
+			// sampleEntry.setCurrentPrice(69.8);
+			// sampleEntry.setProfit(0);
 			sampleEntry.setPointsChange(0);
 			sampleEntry.setOpen(354.2);
 			sampleEntry.setClose(234.0);
@@ -304,11 +314,11 @@ class AppTests {
 	public void quicksortSortsWatchlistObjectsByName(){
 		QuicksortWatchlist quicksortWatchlist = new QuicksortWatchlist();
 		
-        List<Watchlist> unsortedWatchlist = new ArrayList<>();
-        unsortedWatchlist.add(new Watchlist(UUID.randomUUID(), "TestStock C", "VOD.L", "USD", LocalDate.now(), 100, 200, 75.0, 80.0, 5.0, 0.5, 70.0, 85.0, 90.0));
-        unsortedWatchlist.add(new Watchlist(UUID.randomUUID(), "TestStock A", "XAG", "USD", LocalDate.now(), 150, 250, 80.0, 85.0, 5.0, 0.5, 75.0, 90.0, 95.0));
-        unsortedWatchlist.add(new Watchlist(UUID.randomUUID(), "TestStock B", "CBF", "USD", LocalDate.now(), 120, 220, 85.0, 90.0, 5.0, 0.5, 80.0, 95.0, 100.0));
-
+		List<Watchlist> unsortedWatchlist = new ArrayList<>();
+		unsortedWatchlist.add(new Watchlist(UUID.randomUUID(), "TestStock C", "VOD.L", "USD", LocalDate.now(), 100, 200, new BigDecimal("75.0"), new BigDecimal("80.0"), new BigDecimal("5.0"), 0.5, 70.0, 85.0, 90.0));
+		unsortedWatchlist.add(new Watchlist(UUID.randomUUID(), "TestStock A", "XAG", "USD", LocalDate.now(), 150, 250, new BigDecimal("80.0"), new BigDecimal("85.0"), new BigDecimal("5.0"), 0.5, 75.0, 90.0, 95.0));
+		unsortedWatchlist.add(new Watchlist(UUID.randomUUID(), "TestStock B", "CBF", "USD", LocalDate.now(), 120, 220, new BigDecimal("85.0"), new BigDecimal("90.0"), new BigDecimal("5.0"), 0.5, 80.0, 95.0, 100.0));
+	
 
         List<Watchlist> sortedWatchlist = quicksortWatchlist.sortAlgo(unsortedWatchlist);
 
@@ -328,10 +338,11 @@ class AppTests {
 	@Description("/sorted array is received from quicksort")
 
 	public void itemReceivedFromQuicksortIsSorted(){
-		List<Watchlist> existingWatchlist = new ArrayList<>();
-		existingWatchlist.add(new Watchlist(UUID.randomUUID(), "TestStock A", "XAG", "USD", LocalDate.now(), 150, 250, 80.0, 85.0, 5.0, 0.5, 75.0, 90.0, 95.0));
-		existingWatchlist.add(new Watchlist(UUID.randomUUID(), "TestStock B", "CBF", "USD", LocalDate.now(), 120, 220, 85.0, 90.0, 5.0, 0.5, 80.0, 95.0, 100.0));
-		existingWatchlist.add(new Watchlist(UUID.randomUUID(), "TestStock B", "CBF", "USD", LocalDate.now(), 120, 220, 85.0, 90.0, 5.0, 0.5, 80.0, 95.0, 100.0));
+		  List<Watchlist> existingWatchlist = new ArrayList<>();
+    existingWatchlist.add(new Watchlist(UUID.randomUUID(), "TestStock C", "VOD.L", "USD", LocalDate.now(), 100, 200, new BigDecimal("75.0"), new BigDecimal("80.0"), new BigDecimal("5.0"), 0.5, 70.0, 85.0, 90.0));
+    existingWatchlist.add(new Watchlist(UUID.randomUUID(), "TestStock A", "XAG", "USD", LocalDate.now(), 150, 250, new BigDecimal("80.0"), new BigDecimal("85.0"), new BigDecimal("5.0"), 0.5, 75.0, 90.0, 95.0));
+    existingWatchlist.add(new Watchlist(UUID.randomUUID(), "TestStock B", "CBF", "USD", LocalDate.now(), 120, 220, new BigDecimal("85.0"), new BigDecimal("90.0"), new BigDecimal("5.0"), 0.5, 80.0, 95.0, 100.0));
+
 		// binarySearch.binarySearch(new QuicksortWatchlist());
 		QuicksortWatchlist quicksortWatchlist = new QuicksortWatchlist();
 		List<Watchlist> sortedWatchlist = quicksortWatchlist.sortAlgo(existingWatchlist);
@@ -341,10 +352,11 @@ class AppTests {
 	@Test
 	@Description("Binary search returns multiple entries for a given stock name")
 	public void binarySearch_ReturnsMultipleEntriesForStockName() {
-    List<Watchlist> mockWatchlist = new ArrayList<>();
-    mockWatchlist.add(new Watchlist(UUID.randomUUID(), "Amazon", "AMZN", "USD", LocalDate.now(), 10, 10, 300.0, 305.0, 50.0, 5.0, 300.0, 305.0, 310.0));
-    mockWatchlist.add(new Watchlist(UUID.randomUUID(), "Amazon", "AMZN", "USD", LocalDate.now(), 8, 8, 280.0, 290.0, 80.0, 8.0, 280.0, 290.0, 295.0));
-    mockWatchlist.add(new Watchlist(UUID.randomUUID(), "Amazon", "AMZN", "USD", LocalDate.now(), 15, 15, 320.0, 330.0, 150.0, 15.0, 320.0, 330.0, 335.0));
+		List<Watchlist> mockWatchlist = new ArrayList<>();
+		mockWatchlist.add(new Watchlist(UUID.randomUUID(), "Amazon", "AMZN", "USD", LocalDate.now(), 10, 10, new BigDecimal("300.0"), new BigDecimal("305.0"), new BigDecimal("50.0"), 5.0, 300.0, 305.0, 310.0));
+		mockWatchlist.add(new Watchlist(UUID.randomUUID(), "Amazon", "AMZN", "USD", LocalDate.now(), 8, 8, new BigDecimal("280.0"), new BigDecimal("290.0"), new BigDecimal("80.0"), 8.0, 280.0, 290.0, 295.0));
+		mockWatchlist.add(new Watchlist(UUID.randomUUID(), "Amazon", "AMZN", "USD", LocalDate.now(), 15, 15, new BigDecimal("320.0"), new BigDecimal("330.0"), new BigDecimal("150.0"), 15.0, 320.0, 330.0, 335.0));
+	
 
     String stockNameToSearch = "Amazon";
 
@@ -385,6 +397,31 @@ class AppTests {
 		ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
 		HttpStatusCode statusCode = restTemplate.getForEntity(url, String.class).getStatusCode();
 		assertEquals(HttpStatus.OK, statusCode);
+	}
+
+		@Test
+	@Description("Check if 'thing' is a deserialized JSON object")
+	public void testDeserializedJsonObject() throws IOException {
+    // Your JSON string
+    String jsonString = "{\"key\": \"value\"}";
+
+    // Mock ObjectMapper
+    ObjectMapper mockMapper = mock(ObjectMapper.class);
+
+	TypeReference<List<Watchlist>> typeReference = new TypeReference<List<Watchlist>>() {};
+    // Mock the behavior of mapper.readValue() to return a mocked object
+    when(mockMapper.readValue(any(String.class), any(TypeReference.class))).thenReturn(new ArrayList<>());
+
+	ReadExistingWatchlist readExistingWatchlist = new ReadExistingWatchlist();
+
+    // Call the method that reads and deserializes JSON
+    List<Watchlist> deserializedObject = readExistingWatchlist.readExistingWatchlist(jsonString, mockMapper);
+
+    // Assert that deserializedObject is not null, indicating successful deserialization
+    // Call the method that reads and deserializes JSON
+
+	// Assert that deserializedObject is not null, indicating successful deserialization
+	assertNotNull(deserializedObject, "'thing' is not null after deserialization");
 	}
 	
 }

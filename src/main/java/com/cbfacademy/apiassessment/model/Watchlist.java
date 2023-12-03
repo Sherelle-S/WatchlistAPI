@@ -1,18 +1,26 @@
 package com.cbfacademy.apiassessment.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
+import org.bson.types.ObjectId;
 import org.json.simple.JSONObject;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 // model that shows the structure for the watchlist
+@Document(collection = "Watchlist")
 @Component
 public class Watchlist {
 
+    @Id
+    private ObjectId id;
     private UUID uuid;
     private String stockName;
     private String symbol;
@@ -21,21 +29,23 @@ public class Watchlist {
     private LocalDate datePurchased;
     private Integer wantsVolStock;
     private Integer ownsVolStock;
-    private double purchasePrice;
-    private double currentPrice;
-    private double profit;
+    private BigDecimal purchasePrice;
+    private BigDecimal currentPrice;
+    private BigDecimal profit;
     private double pointsChange;
     private double open;
     private double close;
     private double intradayHigh;
+    private boolean isDeleted;
+    private LocalDateTime deletedAt;
 
     // empty watchlist
     public Watchlist() {
     }
 
     // generating uuid with this constructor and implementing the logic so that it is generated if uuid is null
-    public Watchlist(UUID uuid, String stockName, String symbol, String currency, LocalDate datePurchased, Integer ownsVolStock, Integer wantsVolStock, double purchasePrice, double currentPrice, double profit, double pointsChange, double open, double close, double intradayHigh) {
-        this.uuid = uuid == null ? UUID.randomUUID() : uuid;
+    public Watchlist(UUID uuid, String stockName, String symbol, String currency, LocalDate datePurchased, Integer ownsVolStock, Integer wantsVolStock, BigDecimal purchasePrice, BigDecimal currentPrice, BigDecimal profit, double pointsChange, double open, double close, double intradayHigh, boolean isDeleted, LocalDateTime deletedAt) {
+        this.uuid = (uuid == null) ? UUID.randomUUID() : uuid;
         this.stockName = stockName;
         this.symbol = symbol;
         this.currency = currency;
@@ -49,6 +59,7 @@ public class Watchlist {
         this.open = open;
         this.close = close;
         this.intradayHigh = intradayHigh;
+        this.deletedAt = deletedAt;
     }
 
         public Watchlist(JSONObject json){
@@ -65,7 +76,7 @@ public class Watchlist {
         this.datePurchased = LocalDate.parse(datePurchasedStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         this.ownsVolStock = (Integer) json.get("ownsVolStock");
         this.wantsVolStock = (Integer) json.get("wantsVolStock");
-        this.profit = (double) json.get("profit");
+        this.profit = (BigDecimal) json.get("profit");
         this.pointsChange = (double) json.get("pointsChange");
         this.open = (double) json.get("open");
         this.close = (double) json.get("close");
@@ -73,7 +84,7 @@ public class Watchlist {
     }
 
     // watchlist constructor for updating watchlist 
-        public Watchlist(String currency, LocalDate datePurchased, Integer ownsVolStock, Integer wantsVolStock, double purchasePrice, double currentPrice, double profit, double pointsChange, double open, double close, double intradayHigh) {
+        public Watchlist(String currency, LocalDate datePurchased, Integer ownsVolStock, Integer wantsVolStock, BigDecimal purchasePrice, BigDecimal currentPrice, BigDecimal profit, double pointsChange, double open, double close, double intradayHigh, boolean isDeleted, LocalDateTime deletedAt) {
         this.currency = currency;
         this.datePurchased = datePurchased;
         this.ownsVolStock = ownsVolStock;
@@ -85,6 +96,16 @@ public class Watchlist {
         this.open = open;
         this.close = close;
         this.intradayHigh = intradayHigh;
+        this.intradayHigh = intradayHigh;
+        this.deletedAt = deletedAt;
+    }
+
+    public ObjectId getId() {
+        return id;
+    }
+
+    public void setId(ObjectId id) {
+        this.id = id;
     }
 
     // getters and setters
@@ -145,37 +166,49 @@ public class Watchlist {
         this.wantsVolStock = wants;
     }
 
-    public double getPurchasePrice() {
+    public BigDecimal getPurchasePrice() {
         return purchasePrice;
     }
     // sets purchase price and calls calculate profit 
-    public void setPurchasePrice(double purchasePrice) {
+    public void setPurchasePrice(BigDecimal purchasePrice) {
         this.purchasePrice = purchasePrice;
         calculateProfit();
     }
-    public double getCurrentPrice() {
+    public BigDecimal getCurrentPrice() {
         return currentPrice;
     }
 
     // sets current price and calls calculate profit 
-    public void setCurrentPrice(double currentPrice) {
+    public void setCurrentPrice(BigDecimal currentPrice) {
         this.currentPrice = currentPrice;
         calculateProfit();
     }
 
-    public double getProfit() {
+    public BigDecimal getProfit() {
         return profit;
     }
     
-    public void setProfit(double profit){
-        this.profit = (getCurrentPrice() - getPurchasePrice()) * getOwnsVolStock();
+    public void setProfit(BigDecimal profit){
+        calculateProfit();
+        // BigDecimal currentPrice = getCurrentPrice();
+        // BigDecimal purchasePrice = getPurchasePrice();
+        // BigDecimal ownsVolStock = BigDecimal.valueOf(getOwnsVolStock());
+        // this.profit = currentPrice.subtract(purchasePrice).multiply(ownsVolStock);
+        // this.profit = (getCurrentPrice() - getPurchasePrice()) * getOwnsVolStock();
     }
 
     // calculates profit based on user inputs
     private void calculateProfit() {
-        this.profit = (this.currentPrice - this.purchasePrice) * this.ownsVolStock;
+        if (this.currentPrice != null && this.purchasePrice != null && this.ownsVolStock != null) {
+            BigDecimal currentPrice = this.currentPrice;
+            BigDecimal purchasePrice = this.purchasePrice;
+            BigDecimal ownsVolStock = BigDecimal.valueOf(this.ownsVolStock);
+            this.profit = currentPrice.subtract(purchasePrice).multiply(ownsVolStock);
+        } else {
+            // Handle null values: For instance, set profit to zero or another default value
+            this.profit = BigDecimal.ZERO; // or another default value indicating a missing value
+        }
     }
-
     public double getPointsChange() {
         return pointsChange;
     }
@@ -216,6 +249,21 @@ public class Watchlist {
 
     public void setIntradayHigh(double intradayHigh) {
         this.intradayHigh = intradayHigh;
+    }
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
     }
 
     @Override

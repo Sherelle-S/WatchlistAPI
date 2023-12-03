@@ -9,6 +9,7 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,7 @@ import com.cbfacademy.apiassessment.crudActions.appendingActions.read.searchAndS
 import com.cbfacademy.apiassessment.crudActions.appendingActions.read.searchAndSort.SortWatchlistByName;
 import com.cbfacademy.apiassessment.crudActions.appendingActions.updateOneEntry.RunUpdatingMethods;
 import com.cbfacademy.apiassessment.exceptions.WatchlistDataAccessException;
+import com.cbfacademy.apiassessment.externalApi.AlphaVantageConfig;
 import com.cbfacademy.apiassessment.exceptions.InvalidInputException;
 import com.cbfacademy.apiassessment.exceptions.ItemNotFoundException;
 import com.cbfacademy.apiassessment.model.Watchlist;
@@ -31,7 +33,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 // service layer, holds business logic to controller methods 
 @Service
-@Component
+@Primary
 public class WatchlistServiceImpl implements WatchlistService {
 
     String jsonRepo = "src\\main\\resources\\JsonWatchlist.json";
@@ -46,6 +48,8 @@ public class WatchlistServiceImpl implements WatchlistService {
     private RunGetWatchlist readList;
     private RunUpdatingMethods runUpdatingMethods;
     private SortWatchlistByName sortByName;
+    @Autowired
+private AlphaVantageConfig alphaVantageConfig;
     
     // private UpdatePutEntry updateOneEntry;
 
@@ -126,16 +130,16 @@ public class WatchlistServiceImpl implements WatchlistService {
 
     //passes quicksort watchlist though a binary search algorithm
     @Override
-    public ResponseEntity<List<Watchlist>> searchByName(String name) throws InvalidInputException {
+    public ResponseEntity<List<Watchlist>> searchByName(String stockName) throws InvalidInputException {
         try {
-            log.info("service impl name is " + name);
-            List<Watchlist> searchResult = binarySearch.binarySearchWatchlist(getCurrentWatchlist(), name);
+            log.info("service impl name is " + stockName);
+            List<Watchlist> searchResult = binarySearch.binarySearchWatchlist(getCurrentWatchlist(), stockName);
             return ResponseEntity.ok(searchResult);
         } catch (ItemNotFoundException e) {
-            log.error(name + " not found in existing watchlist", e.getMessage());
+            log.error(stockName + " not found in existing watchlist", e.getMessage());
             return ResponseEntity.notFound().build();
         } catch (InvalidInputException e) {
-            log.error(name + " is an invalid input", e.getMessage());
+            log.error(stockName + " is an invalid input", e.getMessage());
             return ResponseEntity.noContent().build();
         } catch (IOException e) {
             log.error("Exception occurred while accessing json data", e.getMessage());
@@ -185,4 +189,18 @@ public class WatchlistServiceImpl implements WatchlistService {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+         // @Override
+    // public Watchlist updateWatchlistFromExternalAPI(String symbol) {
+    //     try {
+    //         Watchlist watchlist = // Fetch the Watchlist from repository using the symbol or any identifier
+    //         watchlist.setOpen(/* value from API */);
+    //         watchlist.setClose(/* value from API */);
+    //         watchlist.setIntradayHigh(/* value from API */);
+    //         return watchlist;
+    //     } catch (Exception e) {
+    //         // Handle exceptions or log errors
+    //         return null;
+    //     }
+    // }
 }

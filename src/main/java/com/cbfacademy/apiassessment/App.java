@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 // import com.cbfacademy.apiassessment.WatchlistRepository;
 // annotations tell spring this is the class where everything will run from, its also a controller with the ability to map requests, componentScan let spring know this is a base class, everything show be variable from here.
 @SpringBootApplication
@@ -16,6 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class App implements CommandLineRunner{
 
 	public static void main(String[] args) {
+		// Dotenv dotenv = Dotenv.configure().load();
+        // // Access variables
+        // String mongoCluster = dotenv.get("MONGO_CLUSTER");
+        // String mongoUser = dotenv.get("MONGO_USER");
+
+        // // Use the variables as needed
+        // System.out.println("MongoDB Cluster: " + mongoCluster);
+        // System.out.println("MongoDB User: " + mongoUser);
 		
 		SpringApplication.run(App.class, args);
 	}

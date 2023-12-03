@@ -67,3 +67,11 @@ application.properties
 
 yoinked
 Musings
+
+config.properties
+
+externalApi
+AlphaVantageConfig
+
+###ENV Files~~~
+.env
