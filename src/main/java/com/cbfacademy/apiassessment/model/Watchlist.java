@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 // model that shows the structure for the watchlist
 @Document(collection = "Watchlist")
 @Component
-public class Watchlist {
+public class Watchlist extends MarketData{
 
     @Id
     private ObjectId id;
@@ -30,12 +30,12 @@ public class Watchlist {
     private Integer wantsVolStock;
     private Integer ownsVolStock;
     private BigDecimal purchasePrice;
-    private BigDecimal currentPrice;
     private BigDecimal profit;
     private double pointsChange;
-    private double open;
-    private double close;
-    private double intradayHigh;
+    private boolean isSold;
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    private LocalDate dateSold;
+    private BigDecimal cumulativeDailyProfit;
     private boolean isDeleted;
     private LocalDateTime deletedAt;
 
@@ -44,7 +44,8 @@ public class Watchlist {
     }
 
     // generating uuid with this constructor and implementing the logic so that it is generated if uuid is null
-    public Watchlist(UUID uuid, String stockName, String symbol, String currency, LocalDate datePurchased, Integer ownsVolStock, Integer wantsVolStock, BigDecimal purchasePrice, BigDecimal currentPrice, BigDecimal profit, double pointsChange, double open, double close, double intradayHigh, boolean isDeleted, LocalDateTime deletedAt) {
+    public Watchlist(UUID uuid, String stockName, String symbol, String currency, LocalDate datePurchased,Integer wantsVolStock, Integer ownsVolStock, BigDecimal purchasePrice, BigDecimal currentPrice, BigDecimal profit, double pointsChange, double open, double close, double intradayHigh, double intrdayLow, BigDecimal cumulativeDailyProfit, LocalDate dateSold, boolean isDeleted, LocalDateTime deletedAt) {
+         super(currentPrice, open, close, intradayHigh, intradayLow);
         this.uuid = (uuid == null) ? UUID.randomUUID() : uuid;
         this.stockName = stockName;
         this.symbol = symbol;
@@ -53,15 +54,13 @@ public class Watchlist {
         this.ownsVolStock = ownsVolStock;
         this.wantsVolStock = wantsVolStock;
         this.purchasePrice = purchasePrice;
-        this.currentPrice = currentPrice;
         this.profit = profit;
         this.pointsChange = pointsChange;
-        this.open = open;
-        this.close = close;
-        this.intradayHigh = intradayHigh;
+        this.cumulativeDailyProfit = cumulativeDailyProfit;
         this.deletedAt = deletedAt;
     }
 
+    // Initializes watchlist object from json data
         public Watchlist(JSONObject json){
             Object uuidObj = json.get("uuid");
             if (uuidObj instanceof String) {
@@ -78,25 +77,24 @@ public class Watchlist {
         this.wantsVolStock = (Integer) json.get("wantsVolStock");
         this.profit = (BigDecimal) json.get("profit");
         this.pointsChange = (double) json.get("pointsChange");
-        this.open = (double) json.get("open");
-        this.close = (double) json.get("close");
-        this.intradayHigh = (double) json.get("intradayHigh");
+        // this.open = (double) json.get("open");
+        // this.close = (double) json.get("close");
+        // this.intradayHigh = (double) json.get("intradayHigh");
     }
 
     // watchlist constructor for updating watchlist 
-        public Watchlist(String currency, LocalDate datePurchased, Integer ownsVolStock, Integer wantsVolStock, BigDecimal purchasePrice, BigDecimal currentPrice, BigDecimal profit, double pointsChange, double open, double close, double intradayHigh, boolean isDeleted, LocalDateTime deletedAt) {
+        public Watchlist(String currency, LocalDate datePurchased, Integer ownsVolStock, Integer wantsVolStock, BigDecimal purchasePrice, BigDecimal currentPrice, BigDecimal profit, double pointsChange, double open, double close, double intradayHigh, boolean isSold, LocalDate dateSold, BigDecimal cumulativeDailyProfit, boolean isDeleted, LocalDateTime deletedAt) {
+        super(currentPrice, open, close, intradayHigh);
         this.currency = currency;
         this.datePurchased = datePurchased;
         this.ownsVolStock = ownsVolStock;
         this.wantsVolStock = wantsVolStock;
         this.purchasePrice = purchasePrice;
-        this.currentPrice = currentPrice;
         this.profit = profit;
+        this.isSold = isSold;
+        this.dateSold = dateSold;
         this.pointsChange = pointsChange;
-        this.open = open;
-        this.close = close;
-        this.intradayHigh = intradayHigh;
-        this.intradayHigh = intradayHigh;
+        this.cumulativeDailyProfit = cumulativeDailyProfit;
         this.deletedAt = deletedAt;
     }
 
@@ -199,7 +197,7 @@ public class Watchlist {
 
     // calculates profit based on user inputs
     private void calculateProfit() {
-        if (this.currentPrice != null && this.purchasePrice != null && this.ownsVolStock != null) {
+        if (currentPrice != null && this.purchasePrice != null && this.ownsVolStock != null) {
             BigDecimal currentPrice = this.currentPrice;
             BigDecimal purchasePrice = this.purchasePrice;
             BigDecimal ownsVolStock = BigDecimal.valueOf(this.ownsVolStock);
@@ -218,38 +216,35 @@ public class Watchlist {
         this.pointsChange = getClose() - getOpen();
     }
 
-    public double getOpen() {
-        return open;
-    }
-
-    // sets stockMarket open price and calls calculate points change 
-    public void setOpen(double open) {
-        this.open = open;
-        calculatePointsChange();
-    }
-
-    public double getClose() {
-        return close;
-    }
-
-    // sets stockMarket closing price from user input and calculates points change
-    public void setClose(double close) {
-        this.close = close;
-        calculatePointsChange();
-    }
-
     // calculates points change based on input user values
-    private void calculatePointsChange() {
-        this.pointsChange = this.close - this.open; 
+    public void calculatePointsChange() {
+        this.pointsChange = getClose() - getOpen(); 
     }
 
-    public double getIntradayHigh() {
-        return intradayHigh;
+     public boolean isSold() {
+        return isSold;
     }
 
-    public void setIntradayHigh(double intradayHigh) {
-        this.intradayHigh = intradayHigh;
+    public void setSold(boolean isSold) {
+        this.isSold = isSold;
     }
+
+    public LocalDate getDateSold() {
+        return dateSold;
+    }
+
+    public void setDateSold(LocalDate dateSold) {
+        this.dateSold = dateSold;
+    }
+
+    public BigDecimal getCumulativeDailyProfit() {
+        return cumulativeDailyProfit;
+    }
+
+    public void setCumulativeDailyProfit(BigDecimal cumulativeDailyProfit) {
+        this.cumulativeDailyProfit = cumulativeDailyProfit;
+    }
+
     public boolean isDeleted() {
         return isDeleted;
     }
@@ -266,8 +261,13 @@ public class Watchlist {
         this.deletedAt = deletedAt;
     }
 
-    @Override
+   @Override
     public String toString() {
-        return "Watchlist [uuid=" + uuid + ", stockName=" + stockName + ", symbol=" + symbol + "currency=" + currency + ", datePurchased=" + datePurchased + ", has=" + ownsVolStock + ", wants=" + wantsVolStock + ", profit=" + profit + ", pointsChange=" + pointsChange + ", open=" + open + ", close=" + close + ", intradayHigh=" + intradayHigh + "]";
+        return "Watchlist [id=" + id + ", uuid=" + uuid + ", stockName=" + stockName + ", symbol=" + symbol
+                + ", currency=" + currency + ", datePurchased=" + datePurchased + ", wantsVolStock=" + wantsVolStock
+                + ", ownsVolStock=" + ownsVolStock + ", purchasePrice=" + purchasePrice + ", profit=" + profit
+                + ", pointsChange=" + pointsChange + ", isSold=" + isSold + ", dateSold=" + dateSold
+                + ", cumulativeDailyProfit=" + cumulativeDailyProfit + ", isDeleted=" + isDeleted + ", deletedAt="
+                + deletedAt + "]";
     }
 }
