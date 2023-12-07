@@ -55,7 +55,7 @@ public void saveWatchlist(Watchlist watchlist) {
 
             if (updatedWatchlist != null) {
                 apiWatchlist.setOpen(updatedWatchlist.getOpen());
-                apiWatchlist.setClose(updatedWatchlist.getClose());
+                apiWatchlist.setPrevClose(updatedWatchlist.getPrevClose());
                 apiWatchlist.setIntradayHigh(updatedWatchlist.getIntradayHigh());
             } else {
                 throw new ExternalAPIResponseUnavailable("unable to update external API response.");

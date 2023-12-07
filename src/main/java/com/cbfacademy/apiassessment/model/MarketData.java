@@ -12,7 +12,7 @@ public class MarketData {
 
     private BigDecimal currentPrice; 
     private double open;
-    private double close;
+    private double prevClose;
     private double intradayHigh;
     private double intradayLow;
     private Watchlist watchlist;
@@ -21,9 +21,9 @@ public class MarketData {
     }
 
     public MarketData(BigDecimal currentPrice, double open, double close, double intradayHigh, double intradayLow) {
-        this.currentPrice = currentPrice;
+        this.currentPrice = currentPrice; //if we use adjusted close price as current price
         this.open = open;
-        this.close = close;
+        this.prevClose = close;
         this.intradayHigh = intradayHigh;
         this.intradayLow = intradayLow;
     }
@@ -32,8 +32,10 @@ public class MarketData {
         return currentPrice;
     }
 
+    // sets current price and calls calculate profit 
     public void setCurrentPrice(BigDecimal currentPrice) {
-        this.currentPrice = currentPrice;
+        this.currentPrice = currentPrice; //if we use adjusted close price as current price
+        watchlist.calculateProfit();
     }
 
     public double getOpen() {
@@ -45,13 +47,13 @@ public class MarketData {
         this.open = open;
         watchlist.calculatePointsChange();
     }
-    public double getClose() {
-        return close;
+    public double getPrevClose() {
+        return prevClose;
     }
 
     // sets stockMarket closing price from user input and calculates points change
-    public void setClose(double close) {
-        this.close = close;
+    public void setPrevClose(double close) {
+        this.prevClose = close;
         watchlist.calculatePointsChange();
     }
 
@@ -73,7 +75,8 @@ public class MarketData {
 
     @Override
     public String toString() {
-        return "MarketData [currentPrice=" + currentPrice + ", open=" + open + ", close=" + close + ", intradayHigh="
-                + intradayHigh + "]";
+        return "MarketData [currentPrice=" + currentPrice + ", open=" + open + ", close=" + prevClose + ", intradayHigh="
+                + intradayHigh + ", intradayLow=" + intradayLow + ", watchlist=" + watchlist + "]";
     }
+    
 }

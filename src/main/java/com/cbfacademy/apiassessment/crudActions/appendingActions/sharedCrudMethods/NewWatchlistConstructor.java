@@ -21,7 +21,7 @@ public class NewWatchlistConstructor {
     // @Autowired
     public Watchlist updateOneItem(Watchlist existingEntry, Watchlist newEntry, Watchlist apiWatchlist){
         apiWatchlist.setOpen(newEntry.getOpen());
-        apiWatchlist.setClose(newEntry.getClose());
+        apiWatchlist.setPrevClose(newEntry.getPrevClose());
         apiWatchlist.setIntradayHigh(newEntry.getIntradayHigh());
         existingEntry.setSymbol(newEntry.getSymbol());
         existingEntry.setOwnsVolStock(newEntry.getOwnsVolStock());

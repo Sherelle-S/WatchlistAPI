@@ -193,7 +193,7 @@ class AppTests {
 		sampleEntry.setProfit(BigDecimal.ZERO); // Use BigDecimal.ZERO for zero value
 		sampleEntry.setPointsChange(0);
 		sampleEntry.setOpen(354.2);
-		sampleEntry.setClose(234.0);
+		sampleEntry.setPrevClose(234.0);
 		sampleEntry.setIntradayHigh(356.2);
 
 		sampleMockWatchlist.add(sampleEntry);
@@ -237,7 +237,7 @@ class AppTests {
 			// sampleEntry.setProfit(0);
 			sampleEntry.setPointsChange(0);
 			sampleEntry.setOpen(354.2);
-			sampleEntry.setClose(234.0);
+			sampleEntry.setPrevClose(234.0);
 			sampleEntry.setIntradayHigh(356.2);
 
 		doReturn(new ResponseEntity<>(HttpStatus.OK)).when(writeToJson).writeToJson(anyString(), any(ObjectMapper.class), anyList());

@@ -44,21 +44,7 @@ public class Watchlist extends MarketData{
     }
 
     // generating uuid with this constructor and implementing the logic so that it is generated if uuid is null
-    public Watchlist(UUID uuid, String stockName, String symbol, String currency, LocalDate datePurchased,Integer wantsVolStock, Integer ownsVolStock, BigDecimal purchasePrice, BigDecimal currentPrice, BigDecimal profit, double pointsChange, double open, double close, double intradayHigh, double intrdayLow, BigDecimal cumulativeDailyProfit, LocalDate dateSold, boolean isDeleted, LocalDateTime deletedAt) {
-         super(currentPrice, open, close, intradayHigh, intradayLow);
-        this.uuid = (uuid == null) ? UUID.randomUUID() : uuid;
-        this.stockName = stockName;
-        this.symbol = symbol;
-        this.currency = currency;
-        this.datePurchased = datePurchased;
-        this.ownsVolStock = ownsVolStock;
-        this.wantsVolStock = wantsVolStock;
-        this.purchasePrice = purchasePrice;
-        this.profit = profit;
-        this.pointsChange = pointsChange;
-        this.cumulativeDailyProfit = cumulativeDailyProfit;
-        this.deletedAt = deletedAt;
-    }
+    
 
     // Initializes watchlist object from json data
         public Watchlist(JSONObject json){
@@ -82,26 +68,49 @@ public class Watchlist extends MarketData{
         // this.intradayHigh = (double) json.get("intradayHigh");
     }
 
-    // watchlist constructor for updating watchlist 
-        public Watchlist(String currency, LocalDate datePurchased, Integer ownsVolStock, Integer wantsVolStock, BigDecimal purchasePrice, BigDecimal currentPrice, BigDecimal profit, double pointsChange, double open, double close, double intradayHigh, boolean isSold, LocalDate dateSold, BigDecimal cumulativeDailyProfit, boolean isDeleted, LocalDateTime deletedAt) {
-        super(currentPrice, open, close, intradayHigh);
+    public Watchlist(BigDecimal currentPrice, double open, double close, double intradayHigh, double intradayLow,
+                ObjectId id, UUID uuid, String stockName, String symbol, String currency, LocalDate datePurchased,
+                Integer wantsVolStock, Integer ownsVolStock, BigDecimal purchasePrice, BigDecimal profit,
+                double pointsChange, BigDecimal cumulativeDailyProfit,
+                boolean isDeleted, LocalDateTime deletedAt) {
+            super(currentPrice, open, close, intradayHigh, intradayLow);
+            this.id = id;
+            this.uuid = (uuid == null) ? UUID.randomUUID() : uuid;
+            this.stockName = stockName;
+            this.symbol = symbol;
+            this.currency = currency;
+            this.datePurchased = datePurchased;
+            this.wantsVolStock = wantsVolStock;
+            this.ownsVolStock = ownsVolStock;
+            this.purchasePrice = purchasePrice;
+            this.profit = profit;
+            this.pointsChange = pointsChange;
+            this.cumulativeDailyProfit = cumulativeDailyProfit;
+            this.isDeleted = isDeleted;
+            this.deletedAt = deletedAt;
+        }
+
+        // watchlist constructor for updating watchlist 
+        public Watchlist(BigDecimal currentPrice, double open, double close, double intradayHigh, double intradayLow,
+            String symbol, String currency, Integer wantsVolStock, Integer ownsVolStock, double pointsChange,
+            boolean isSold, LocalDate dateSold, BigDecimal cumulativeDailyProfit) {
+        super(currentPrice, open, close, intradayHigh, intradayLow);
+        this.symbol = symbol;
         this.currency = currency;
-        this.datePurchased = datePurchased;
-        this.ownsVolStock = ownsVolStock;
         this.wantsVolStock = wantsVolStock;
-        this.purchasePrice = purchasePrice;
-        this.profit = profit;
+        this.ownsVolStock = ownsVolStock;
+        this.pointsChange = pointsChange;
         this.isSold = isSold;
         this.dateSold = dateSold;
-        this.pointsChange = pointsChange;
         this.cumulativeDailyProfit = cumulativeDailyProfit;
-        this.deletedAt = deletedAt;
     }
+
 
     public ObjectId getId() {
         return id;
     }
 
+   
     public void setId(ObjectId id) {
         this.id = id;
     }
@@ -172,16 +181,7 @@ public class Watchlist extends MarketData{
         this.purchasePrice = purchasePrice;
         calculateProfit();
     }
-    public BigDecimal getCurrentPrice() {
-        return currentPrice;
-    }
-
-    // sets current price and calls calculate profit 
-    public void setCurrentPrice(BigDecimal currentPrice) {
-        this.currentPrice = currentPrice;
-        calculateProfit();
-    }
-
+   
     public BigDecimal getProfit() {
         return profit;
     }
@@ -196,15 +196,15 @@ public class Watchlist extends MarketData{
     }
 
     // calculates profit based on user inputs
-    private void calculateProfit() {
-        if (currentPrice != null && this.purchasePrice != null && this.ownsVolStock != null) {
-            BigDecimal currentPrice = this.currentPrice;
+    protected void calculateProfit() {
+        if (getCurrentPrice() != null && this.purchasePrice != null && this.ownsVolStock != null) {
+            BigDecimal currentPrice = getCurrentPrice();
             BigDecimal purchasePrice = this.purchasePrice;
             BigDecimal ownsVolStock = BigDecimal.valueOf(this.ownsVolStock);
             this.profit = currentPrice.subtract(purchasePrice).multiply(ownsVolStock);
         } else {
-            // Handle null values: For instance, set profit to zero or another default value
-            this.profit = BigDecimal.ZERO; // or another default value indicating a missing value
+            // Handle null values, set profit to 0
+            this.profit = BigDecimal.ZERO; 
         }
     }
     public double getPointsChange() {
@@ -213,12 +213,12 @@ public class Watchlist extends MarketData{
 
     // logic for setting points change automatically based on user input
     public void setPointsChange(double pointsChange) {
-        this.pointsChange = getClose() - getOpen();
+        this.pointsChange = getPrevClose() - getOpen();
     }
 
     // calculates points change based on input user values
-    public void calculatePointsChange() {
-        this.pointsChange = getClose() - getOpen(); 
+    protected void calculatePointsChange() {
+        this.pointsChange = getPrevClose() - getOpen(); 
     }
 
      public boolean isSold() {
