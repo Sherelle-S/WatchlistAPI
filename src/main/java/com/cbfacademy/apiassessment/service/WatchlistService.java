@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import com.cbfacademy.apiassessment.exceptions.InvalidInputException;
 import com.cbfacademy.apiassessment.exceptions.WatchlistDataAccessException;
@@ -19,10 +21,11 @@ public interface WatchlistService {
 
     ResponseEntity<List<Watchlist>> sortedWatchlist() throws WatchlistDataAccessException;
 
-    ResponseEntity<List<Watchlist>> searchByName(String name) throws InvalidInputException;
+    ResponseEntity<List<Watchlist>> searchByName(String stockName) throws InvalidInputException;
 
     ResponseEntity<Void> updateEntry(UUID uuid, Watchlist newEntry);
 
     ResponseEntity<List<Watchlist>> deleteWatchlistEntry(UUID uuid) throws IOException;
+
 
 } 

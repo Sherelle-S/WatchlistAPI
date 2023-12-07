@@ -24,28 +24,28 @@ public class BinarySearch {
             this.quicksortWatchlist = quicksortWatchlist;
         }
 
-    public List<Watchlist> binarySearchWatchlist(List<Watchlist> existingWatchlist, String name){
+    public List<Watchlist> binarySearchWatchlist(List<Watchlist> existingWatchlist, String stockName){
         List<Watchlist> sortedWatchlist = quicksortWatchlist.sortAlgo(existingWatchlist);
         List<Watchlist> foundEntries = new ArrayList<>();
 
-        int index = binarySearch(sortedWatchlist, name);
-        log.info("looking for items containing stockName " + name + " in their.");
+        int index = binarySearch(sortedWatchlist, stockName);
+        log.info("looking for items containing stockName " + stockName + " in their.");
 
         if(index == -1){
-            log.info(name + " cannot be found it our watchlist.");
+            log.info(stockName + " cannot be found it our watchlist.");
             log.info("Watchlist entries in binary search.", sortedWatchlist);
-            throw new ItemNotFoundException(name + "Cannot be found in Watchlist");
+            throw new ItemNotFoundException(stockName + "Cannot be found in Watchlist");
         } else {
-            log.info(name + " found at " + index);
+            log.info(stockName + " found at " + index);
             
             int currentIndex = index;
-            while (currentIndex >= 0 && sortedWatchlist.get(currentIndex).getStockName().equalsIgnoreCase(name)) {
+            while (currentIndex >= 0 && sortedWatchlist.get(currentIndex).getStockName().equalsIgnoreCase(stockName)) {
                 foundEntries.add(existingWatchlist.get(currentIndex));
                 currentIndex--; 
             }
             // return foundEntries;
             currentIndex = index + 1;
-            while(currentIndex < existingWatchlist.size() && sortedWatchlist.get(currentIndex).getStockName().equalsIgnoreCase(name)){
+            while(currentIndex < existingWatchlist.size() && sortedWatchlist.get(currentIndex).getStockName().equalsIgnoreCase(stockName)){
                 foundEntries.add(existingWatchlist.get(currentIndex));
                 currentIndex++;
             }
@@ -53,11 +53,11 @@ public class BinarySearch {
         return foundEntries;
     }
 
-    private int binarySearch(List<Watchlist> sortedWatchlist, String name) {
+    private int binarySearch(List<Watchlist> sortedWatchlist, String stockName) {
         log.info("Binary search operation is taking place");
         int start = 0;
         int end = sortedWatchlist.size() - 1;
-        String searchName = name.toLowerCase();
+        String searchName = stockName.toLowerCase();
 
         while(start <= end) {
             int middle = start + (end - start) / 2;

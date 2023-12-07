@@ -37,6 +37,8 @@ public class CreateFirstItem {
     public void CreateFirstEntry(List<Watchlist> watchlist, String jsonRepo) throws IOException{
         try {
             List<Watchlist> newWatchlistEntry = new ArrayList<>();
+                        // Watchlist updatedWatchlist = serviceImpl.updateWatchlistFromExternalAPI(watchlist.getSymbol());
+
             newWatchlistEntry = addWatchlistItem.appendToWatchlist(watchlist, newWatchlistEntry);
             writeToJson.writeToJson(jsonRepo, mapper, newWatchlistEntry);
         } catch (JacksonException e) {

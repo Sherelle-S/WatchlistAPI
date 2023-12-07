@@ -9,7 +9,7 @@ import com.cbfacademy.apiassessment.model.Watchlist;
 @Component
 public class ExistingWatchlistConstructor {
 
-    // update multiple entries for when we add a new item to the watchlist
+    // update multiple entries for when we add a new item to the watchlist in a POST request
     // @Autowired
     private static final Logger log = LoggerFactory.getLogger(ExistingWatchlistConstructor.class);
     public Watchlist updateExistingEntry(Watchlist existingEntry, Watchlist newEntry){
@@ -23,7 +23,7 @@ public class ExistingWatchlistConstructor {
         existingEntry.setProfit(newEntry.getProfit());
         existingEntry.setPointsChange(newEntry.getPointsChange());
         existingEntry.setOpen(newEntry.getOpen());
-        existingEntry.setClose(newEntry.getClose());
+        existingEntry.setPrevClose(newEntry.getPrevClose());
         existingEntry.setIntradayHigh(newEntry.getIntradayHigh());
         log.info("object with existing data has been created.");
         return existingEntry;

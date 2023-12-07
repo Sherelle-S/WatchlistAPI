@@ -1,5 +1,17 @@
 {
     "githubPullRequests.ignoredPullRequestBranches": [
         "main"
-    ]
+    ],
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "cSpell.words": [
+        "databind",
+        "Dotenv",
+        "fasterxml",
+        "intraday",
+        "mvnw",
+        "Servlet",
+        "springframework",
+        "Vantige"
+    ],
+    "java.compile.nullAnalysis.mode": "disabled"
 }
