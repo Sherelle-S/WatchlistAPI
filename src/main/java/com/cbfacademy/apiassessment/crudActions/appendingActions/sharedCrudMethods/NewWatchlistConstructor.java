@@ -30,10 +30,9 @@ public class NewWatchlistConstructor {
         existingEntry.setCurrentPrice(newEntry.getCurrentPrice());
         existingEntry.setPurchasePrice(newEntry.getPurchasePrice());
         existingEntry.setProfit(newEntry.getProfit());
-        existingEntry.setPointsChange(newEntry.getPointsChange());
-        // existingEntry.setOpen(newEntry.getOpen());
-        // existingEntry.setClose(newEntry.getClose());
-        // existingEntry.setIntradayHigh(newEntry.getIntradayHigh());
+        existingEntry.setOpen(newEntry.getOpen());
+        existingEntry.setPrevClose(newEntry.getPrevClose());
+        existingEntry.setIntradayHigh(newEntry.getIntradayHigh());
         log.info("object update one item has been created.");
         return newEntry;
     }

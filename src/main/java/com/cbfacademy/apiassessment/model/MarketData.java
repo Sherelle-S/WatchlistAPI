@@ -2,6 +2,7 @@ package com.cbfacademy.apiassessment.model;
 
 import java.math.BigDecimal;
 
+import org.json.simple.JSONObject;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,7 @@ public class MarketData {
     private double prevClose;
     private double intradayHigh;
     private double intradayLow;
-    private Watchlist watchlist;
+    private ModelComponents modelComponents;
 
     public MarketData() {
     }
@@ -28,6 +29,14 @@ public class MarketData {
         this.intradayLow = intradayLow;
     }
 
+    public MarketData(JSONObject json){
+        this.open = (double) json.get("open");
+        this.currentPrice = (BigDecimal) json.get("currentPrice");
+        this.prevClose = (double) json.get("prevClose");
+        this.intradayHigh = (double) json.get("intradayHigh");
+        this.intradayLow = (double) json.get("intradayLow");
+    }
+
     public BigDecimal getCurrentPrice() {
         return currentPrice;
     }
@@ -35,7 +44,7 @@ public class MarketData {
     // sets current price and calls calculate profit 
     public void setCurrentPrice(BigDecimal currentPrice) {
         this.currentPrice = currentPrice; //if we use adjusted close price as current price
-        watchlist.calculateProfit();
+        modelComponents.calculateProfit();
     }
 
     public double getOpen() {
@@ -45,7 +54,6 @@ public class MarketData {
     // sets stockMarket open price and calls calculate points change 
     public void setOpen(double open) {
         this.open = open;
-        watchlist.calculatePointsChange();
     }
     public double getPrevClose() {
         return prevClose;
@@ -54,7 +62,6 @@ public class MarketData {
     // sets stockMarket closing price from user input and calculates points change
     public void setPrevClose(double close) {
         this.prevClose = close;
-        watchlist.calculatePointsChange();
     }
 
     public double getIntradayHigh() {
@@ -76,7 +83,7 @@ public class MarketData {
     @Override
     public String toString() {
         return "MarketData [currentPrice=" + currentPrice + ", open=" + open + ", close=" + prevClose + ", intradayHigh="
-                + intradayHigh + ", intradayLow=" + intradayLow + ", watchlist=" + watchlist + "]";
+                + intradayHigh + ", intradayLow=" + intradayLow + ", modelComponents=" + modelComponents + "]";
     }
     
 }

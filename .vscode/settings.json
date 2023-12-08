@@ -13,5 +13,6 @@
         "springframework",
         "Vantige"
     ],
-    "java.compile.nullAnalysis.mode": "disabled"
+    "java.compile.nullAnalysis.mode": "disabled",
+    "docwriter.style": "Javadoc"
 }
