@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.cbfacademy.apiassessment.crudActions.appendingActions.sharedCrudMethods.NewWatchlistConstructor;
 import com.cbfacademy.apiassessment.exceptions.ItemNotFoundException;
+import com.cbfacademy.apiassessment.model.MarketData;
 import com.cbfacademy.apiassessment.model.Watchlist;
 
 @Component
@@ -26,13 +27,13 @@ public class UpdatePutEntry {
     }
 
     // updates one watchlist entry located by UUID if uuid cannot be found we throw exception
-    public void updateEntryViaUuid(List<Watchlist> existingWatchlist, UUID uuid, Watchlist newEntry){
+    public void updateEntryViaUuid(List<Watchlist> existingWatchlist, UUID uuid, Watchlist newEntry, MarketData marketData){
         log.info("updatePutEntry is running");
         log.info("Locating watchlist item with UUID: {}, uuid");
         boolean found = false;
         for(Watchlist watchlistEntry : existingWatchlist){
             if(watchlistEntry.getUuid().equals(uuid)){
-                newWatchlist.updateOneItem(watchlistEntry, newEntry);
+                newWatchlist.updateOneItem(watchlistEntry, newEntry, marketData);
                 log.info("Item with UUID {} has been updated in watchlist.", uuid);
                 found = true;
                 break;

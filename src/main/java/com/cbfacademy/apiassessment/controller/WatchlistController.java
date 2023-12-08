@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cbfacademy.apiassessment.exceptions.InvalidInputException;
 import com.cbfacademy.apiassessment.exceptions.WatchlistDataAccessException;
 import com.cbfacademy.apiassessment.model.Watchlist;
-import com.cbfacademy.apiassessment.repository.MongoWatchlistRepository;
+import com.cbfacademy.apiassessment.repository.WatchlistRepository;
 import com.cbfacademy.apiassessment.service.WatchlistService;
 
 // contains the controllers for CRUD request, maps them to the correct endpoint and gets Http responses.
@@ -50,7 +50,7 @@ public class WatchlistController {
     @Autowired
     private WatchlistService service;
     @Autowired
-    private MongoWatchlistRepository repo;
+    private WatchlistRepository repo;
 
    // The code `public WatchlistController(WatchlistService service) { this.service = service; }` is a
    // constructor for the `WatchlistController` class. It takes an instance of `WatchlistService` as a
@@ -109,7 +109,7 @@ public class WatchlistController {
     @PostMapping(value = "/addEntry", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity <Void> create(@RequestBody List<Watchlist> watchlist) throws WatchlistDataAccessException{
         repo.saveAll(watchlist);
-        return service.create(watchlist);      
+        return service.create(watchlist, null);      
         // create some logic that means if client already has stock of item of x name in watchlist, they cannot add another item of that stock they must instead update.
     }
 

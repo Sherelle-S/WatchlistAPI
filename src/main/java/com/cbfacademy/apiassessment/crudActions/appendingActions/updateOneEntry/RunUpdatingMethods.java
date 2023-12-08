@@ -16,6 +16,7 @@ import com.cbfacademy.apiassessment.crudActions.appendingActions.createEntry.Run
 import com.cbfacademy.apiassessment.crudActions.appendingActions.createEntry.WriteToJsonFile;
 import com.cbfacademy.apiassessment.crudActions.appendingActions.read.ReadExistingWatchlist;
 import com.cbfacademy.apiassessment.exceptions.ItemNotFoundException;
+import com.cbfacademy.apiassessment.model.MarketData;
 import com.cbfacademy.apiassessment.model.Watchlist;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -44,11 +45,11 @@ public class RunUpdatingMethods {
     }
 
     // runs all the components for updating one entry of watchlist readsWatchlist updates one entry and writes back to json
-    public ResponseEntity<Void> runUpdatingMethods(List<Watchlist> watchlist, String jsonRepo, Watchlist newEntry, UUID uuid) throws ParseException{
+    public ResponseEntity<Void> runUpdatingMethods(List<Watchlist> watchlist, String jsonRepo, Watchlist newEntry, UUID uuid, MarketData marketData) throws ParseException{
         try {
             readList.readExistingWatchlist(jsonRepo, mapper);
             log.info("reader is working in run updating method");
-            updateOneEntry.updateEntryViaUuid(watchlist, uuid, newEntry);
+            updateOneEntry.updateEntryViaUuid(watchlist, uuid, newEntry, marketData);
             writeToJson.writeToJson(jsonRepo, mapper, watchlist);
             log.info("Watchlist entry has successfully been updated.");
             return new ResponseEntity<>(HttpStatus.CREATED);

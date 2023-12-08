@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import com.cbfacademy.apiassessment.crudActions.appendingActions.read.ReadExistingWatchlist;
+import com.cbfacademy.apiassessment.model.MarketData;
 import com.cbfacademy.apiassessment.model.Watchlist;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,10 +42,10 @@ public class RunCreatingActions {
      * @return ResponseEntity<?>
      */
     // public ResponseEntity<?> appendNewItems(List<Watchlist> watchlist, List<Watchlist> existingWatchlist, String jsonRepo) throws IOException{
-        public ResponseEntity<?> appendNewItems(List<Watchlist> watchlist, String jsonRepo) throws IOException{
+        public ResponseEntity<?> appendNewItems(List<Watchlist> watchlist, String jsonRepo, MarketData marketData) throws IOException{
         try {
             List<Watchlist> existingWatchlist = readList.readExistingWatchlist(jsonRepo, mapper);
-            List<Watchlist> updatedWatchlist = addEntry.appendToWatchlist(watchlist, existingWatchlist);
+            List<Watchlist> updatedWatchlist = addEntry.appendToWatchlist(watchlist, existingWatchlist, marketData);
             writeToJson.writeToJson(jsonRepo, mapper, updatedWatchlist);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (JacksonException e) {

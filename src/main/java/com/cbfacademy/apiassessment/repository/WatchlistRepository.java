@@ -9,10 +9,11 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import com.cbfacademy.apiassessment.model.MarketData;
 import com.cbfacademy.apiassessment.model.Watchlist;
 
 @Repository
-public interface MongoWatchlistRepository extends MongoRepository<Watchlist, UUID> {
+public interface WatchlistRepository extends MongoRepository<Watchlist, UUID> {
         // public Watchlist updateWatchlistFromExternalAPI(String symbol);
 
         List<Watchlist> findByStockName(String stockName);
@@ -36,4 +37,12 @@ public interface MongoWatchlistRepository extends MongoRepository<Watchlist, UUI
 //     mongoTemplate.save(watchlist);
 //     // Don't manually set UUID or ID here
 // }
+
+// MarketData marketData = new MarketData();
+// // Set properties for marketData
+// marketDataRepository.save(marketData);
+
+// Watchlist watchlist = new Watchlist();
+// // Set properties for watchlist
+// watchlistRepository.save(watchlist);
 }

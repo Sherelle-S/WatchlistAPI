@@ -1,6 +1,6 @@
 /**
- * The class `NewWatchlistConstructor` is a component in a Java application that contains a method for
- * updating a single item in a watchlist.
+ * The class `NewWatchlistConstructor` is a component in a Java application that provides methods for
+ * updating a `Watchlist` object.
  */
 package com.cbfacademy.apiassessment.crudActions.appendingActions.sharedCrudMethods;
 
@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.cbfacademy.apiassessment.externalApi.AlphaVantageConfig;
+import com.cbfacademy.apiassessment.model.MarketData;
 import com.cbfacademy.apiassessment.model.Watchlist;
 
 import io.github.mainstringargs.alphavantagescraper.properties.AlphaVantageAPIKey;
@@ -17,35 +18,26 @@ import io.github.mainstringargs.alphavantagescraper.properties.AlphaVantageAPIKe
 @Component
 public class NewWatchlistConstructor {
   
+   // The code snippet `@Autowired private AlphaVantageConfig alphaVantageConfig;` is using the
+   // `@Autowired` annotation to inject an instance of the `AlphaVantageConfig` class into the
+   // `NewWatchlistConstructor` class. This allows the `NewWatchlistConstructor` class to access and
+   // use the methods and properties of the `AlphaVantageConfig` class.
     @Autowired
     private AlphaVantageConfig alphaVantageConfig;
     private static final Logger log = LoggerFactory.getLogger(NewWatchlistConstructor.class);
 
     // Updates One existing entry, to be used with the PUT operations.
     // @Autowired
-    /**
-     * The function updates the values of an existing Watchlist item with the values from a new
-     * Watchlist item and returns the updated item.
-     * 
-     * @param existingEntry The existing entry in the watchlist that needs to be updated.
-     * @param newEntry The newEntry parameter is an object of the Watchlist class that contains the
-     * updated information for a specific item in the watchlist.
-     * @param apiWatchlist The `apiWatchlist` parameter is an instance of the `Watchlist` class that
-     * represents the watchlist data obtained from an API.
-     * @return The method is returning the updated Watchlist object, which is represented by the
-     * variable "newEntry".
-     */
-    public Watchlist updateOneItem(Watchlist existingEntry, Watchlist newEntry, Watchlist apiWatchlist){
-        apiWatchlist.setOpen(newEntry.getOpen());
-        apiWatchlist.setPrevClose(newEntry.getPrevClose());
-        apiWatchlist.setIntradayHigh(newEntry.getIntradayHigh());
+   // The `updateOneItem` method in the `NewWatchlistConstructor` class is a method that updates the
+   // properties of an existing `Watchlist` object with the values from a new `Watchlist` object.
+    public Watchlist updateOneItem(Watchlist existingEntry, Watchlist newEntry, MarketData marketData){
         existingEntry.setSymbol(newEntry.getSymbol());
-        existingEntry.setOwnsVolStock(newEntry.getOwnsVolStock());
         existingEntry.setCurrency(newEntry.getCurrency());
+        existingEntry.setOwnsVolStock(newEntry.getOwnsVolStock());
         existingEntry.setWantsVolStock(newEntry.getWantsVolStock());
         existingEntry.setCurrentPrice(newEntry.getCurrentPrice());
-        existingEntry.setPurchasePrice(newEntry.getPurchasePrice());
         existingEntry.setProfit(newEntry.getProfit());
+        existingEntry.setCumulativeProfit(newEntry.getCumulativeProfit());
         existingEntry.setOpen(newEntry.getOpen());
         existingEntry.setPrevClose(newEntry.getPrevClose());
         existingEntry.setIntradayHigh(newEntry.getIntradayHigh());

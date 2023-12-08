@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.cbfacademy.apiassessment.exceptions.ExternalAPIResponseUnavailable;
 import com.cbfacademy.apiassessment.model.MarketData;
 import com.cbfacademy.apiassessment.model.Watchlist;
 
@@ -27,19 +28,25 @@ public class ExistingWatchlistConstructor {
         existingEntry.setOwnsVolStock(newEntry.getOwnsVolStock());
         existingEntry.setCurrency(newEntry.getCurrency());
         existingEntry.setWantsVolStock(newEntry.getWantsVolStock());
-        existingEntry.setCurrentPrice(newEntry.getCurrentPrice());
         existingEntry.setPurchasePrice(newEntry.getPurchasePrice());
         existingEntry.setProfit(newEntry.getProfit());
-        existingEntry.setOpen(newEntry.getOpen());
-        existingEntry.setPrevClose(newEntry.getPrevClose());
-        existingEntry.setIntradayHigh(newEntry.getIntradayHigh());
-
+        existingEntry.setCumulativeProfit(newEntry.getCumulativeProfit());
         //add data from AlphaVantageAPI
-        existingEntry.setCurrentPrice(marketData.getCurrentPrice());
+        // The code block is checking if the `marketData` object is not null. If it is not null, it
+        // means that new data has been retrieved from the Alpha Vantage API. In that case, the code
+        // updates the `existingEntry` object with the new data by setting the current price, open
+        // price, previous close price, and intraday high price.
+        if(marketData != null){
+             existingEntry.setCurrentPrice(marketData.getCurrentPrice());
         existingEntry.setOpen(marketData.getOpen());
         existingEntry.setPrevClose(marketData.getPrevClose());
         existingEntry.setIntradayHigh(marketData.getIntradayHigh());
         log.info("object with existing data has been created.");
+        } else {
+            throw new ExternalAPIResponseUnavailable("unable to retrieve new data from Alpha Vantage API");
+        }
+        
+       
         return existingEntry;
     }
 }

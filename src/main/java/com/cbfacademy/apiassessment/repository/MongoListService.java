@@ -22,11 +22,11 @@ public class MongoListService {
     @Autowired
     private AlphaVantageConfig alphaVantageConfig;
     @Autowired
-    private MongoWatchlistRepository repository;    
+    private WatchlistRepository repository;    
     @Autowired
-    private MongoWatchlistRepository watchlistRepository;
+    private WatchlistRepository watchlistRepository;
 
-    public MongoListService(MongoWatchlistRepository repository, AlphaVantageConfig alphaVantageConfig) {
+    public MongoListService(WatchlistRepository repository, AlphaVantageConfig alphaVantageConfig) {
         this.repository = repository;
         this.alphaVantageConfig = alphaVantageConfig;
     }

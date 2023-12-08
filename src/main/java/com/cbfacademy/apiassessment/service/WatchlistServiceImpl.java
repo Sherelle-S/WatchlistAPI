@@ -31,6 +31,7 @@ import com.cbfacademy.apiassessment.exceptions.WatchlistDataAccessException;
 import com.cbfacademy.apiassessment.externalApi.AlphaVantageConfig;
 import com.cbfacademy.apiassessment.exceptions.InvalidInputException;
 import com.cbfacademy.apiassessment.exceptions.ItemNotFoundException;
+import com.cbfacademy.apiassessment.model.MarketData;
 import com.cbfacademy.apiassessment.model.Watchlist;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -108,7 +109,7 @@ public class WatchlistServiceImpl implements WatchlistService {
   * @return The method is returning a ResponseEntity<Void>.
   */
     @Override
-    public ResponseEntity<Void> create(List<Watchlist> watchlist) throws WatchlistDataAccessException {
+    public ResponseEntity<Void> create(List<Watchlist> watchlist, MarketData marketData) throws WatchlistDataAccessException {
         try {
             File file = new File(jsonRepo);
             if(!file.exists()){

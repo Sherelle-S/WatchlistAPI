@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.cbfacademy.apiassessment.exceptions.WatchlistDataAccessException;
 import com.cbfacademy.apiassessment.exceptions.WatchlistProcessingException;
+import com.cbfacademy.apiassessment.model.MarketData;
 import com.cbfacademy.apiassessment.model.Watchlist;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,12 +35,12 @@ public class CreateFirstItem {
         this.writeToJson = writeToJson;
     }
 // logic for creating entry to json file when watchlist is empty
-    public void CreateFirstEntry(List<Watchlist> watchlist, String jsonRepo) throws IOException{
+    public void CreateFirstEntry(List<Watchlist> watchlist, String jsonRepo, MarketData marketData) throws IOException{
         try {
             List<Watchlist> newWatchlistEntry = new ArrayList<>();
                         // Watchlist updatedWatchlist = serviceImpl.updateWatchlistFromExternalAPI(watchlist.getSymbol());
 
-            newWatchlistEntry = addWatchlistItem.appendToWatchlist(watchlist, newWatchlistEntry);
+            newWatchlistEntry = addWatchlistItem.appendToWatchlist(watchlist, newWatchlistEntry, marketData);
             writeToJson.writeToJson(jsonRepo, mapper, newWatchlistEntry);
         } catch (JacksonException e) {
             log.error("Exception while trying to process json request with jackson", e.getMessage());

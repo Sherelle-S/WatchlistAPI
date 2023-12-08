@@ -39,6 +39,7 @@ public class AddWatchlistItem {
                     entryExists = true;
                     updateExistingEntry.updateExistingEntry(existingEntry, newEntry, marketData);
                     log.info("existingWatchlist at if existing uuid addWatchlist: {}", existingWatchlist);
+                    log.info("Current Market Data", marketData);
                     log.info("watchlist at existing uuid: {}", watchlist);
                     break;
                 }

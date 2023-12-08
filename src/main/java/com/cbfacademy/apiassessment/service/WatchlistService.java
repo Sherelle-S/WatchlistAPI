@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.cbfacademy.apiassessment.exceptions.InvalidInputException;
 import com.cbfacademy.apiassessment.exceptions.WatchlistDataAccessException;
+import com.cbfacademy.apiassessment.model.MarketData;
 import com.cbfacademy.apiassessment.model.Watchlist;
 
 // interface that tells watchlist service what methods it needs to implement but not how to implement them.
@@ -17,7 +18,7 @@ public interface WatchlistService {
 
    // These are method signatures of the methods that need to be implemented in the `WatchlistService`
    // interface.
-    ResponseEntity<Void> create(List<Watchlist> watchlist) throws WatchlistDataAccessException;
+    ResponseEntity<Void> create(List<Watchlist> watchlist, MarketData marketData) throws WatchlistDataAccessException;
 
     ResponseEntity<List<Watchlist>> readWatchlist() throws WatchlistDataAccessException;
 

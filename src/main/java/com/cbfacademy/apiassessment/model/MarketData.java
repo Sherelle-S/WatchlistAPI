@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.stereotype.Component;
 
 // Store watchlist inside of mongoDB watchlist collection
-@Document(collection = "Watchlist")
 @Component
 public class MarketData {
 
