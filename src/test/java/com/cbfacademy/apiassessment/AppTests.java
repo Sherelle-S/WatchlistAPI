@@ -28,7 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -62,6 +64,9 @@ import com.cbfacademy.apiassessment.crudActions.appendingActions.updateOneEntry.
 import com.cbfacademy.apiassessment.exceptions.InvalidInputException;
 import com.cbfacademy.apiassessment.exceptions.ItemNotFoundException;
 import com.cbfacademy.apiassessment.exceptions.WatchlistProcessingException;
+import com.cbfacademy.apiassessment.externalApi.AlphaVantageConfig;
+import com.cbfacademy.apiassessment.externalApi.AlphaVantageService;
+import com.cbfacademy.apiassessment.model.MarketData;
 import com.cbfacademy.apiassessment.model.Watchlist;
 import com.cbfacademy.apiassessment.service.WatchlistServiceImpl;
 import com.fasterxml.jackson.core.exc.StreamWriteException;
@@ -113,7 +118,10 @@ class AppTests {
 	private AddWatchlistItem addWatchlistItem;
 	@InjectMocks
 	private WatchlistServiceImpl service;
-
+@InjectMocks
+    private AlphaVantageService alphaVantageService;
+	@InjectMocks
+	AlphaVantageConfig alphaVantageConfig;
 	@TempDir
 	Path tempDir;
 
@@ -423,5 +431,31 @@ class AppTests {
 	// Assert that deserializedObject is not null, indicating successful deserialization
 	assertNotNull(deserializedObject, "'thing' is not null after deserialization");
 	}
+
+	// AlphaVantageApiTests
+	@Test
+    void testAlphaVantageApiConnection() throws ParseException, IOException {
+      // Mocking the API call without actually hitting the API
+    MarketData mockedMarketData = new MarketData(/* Initialize with sample data */);
+    when(alphaVantageConfig.useAlphaVantigeAPI("XAG")).thenReturn(mockedMarketData);
+
+    // Call your service method that connects to AlphaVantage API
+    MarketData apiResponse = alphaVantageService.getMarketData("XAG");
+
+    // Assert that the API call was successful and returned a MarketData object
+    Assertions.assertNotNull(apiResponse);
+    }
 	
+	@Test
+    void testAlphaVantageDataRetrieval() throws ParseException {
+        // Mocking the API call without actually hitting the API
+        when(restTemplate.getForObject("https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=YOUR_SYMBOL&apikey=YOUR_API_KEY", MarketData.class))
+            .thenReturn(new MarketData(/* Initialize MarketData object with sample data */));
+
+        // Call your service method that retrieves data from AlphaVantage API
+        MarketData apiData = alphaVantageService.getMarketData("XAG");
+
+        // Assert that data was retrieved successfully
+        Assertions.assertNotNull(apiData);
+    }
 }
