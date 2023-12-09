@@ -1,3 +1,7 @@
+/**
+ * The `locatePutEntry` class is responsible for locating and updating an item in a watchlist based on
+ * its UUID.
+ */
 package com.cbfacademy.apiassessment.crudActions.appendingActions.updateOneEntry;
 
 import java.io.IOException;
@@ -28,11 +32,22 @@ public class locatePutEntry {
     private NewWatchlistConstructor newWatchlist;
     
     public locatePutEntry(ObjectMapper mapper, NewWatchlistConstructor newWatchlist) {
+        // mapper.registerModule(new JavaTimeModule()) must be registered at the same time as object mapper to avoid a java 8 problem
         this.mapper = mapper;
         this.mapper = mapper.registerModule(new JavaTimeModule());
         this.newWatchlist = newWatchlist;
     }
 
+   /**
+    * The function locates an entry in an existing watchlist by its UUID and updates it with new data.
+    * 
+    * @param existingWatchlist A list of Watchlist objects that represents the current watchlist.
+    * @param uuid The UUID (Universally Unique Identifier) is a unique identifier for the watchlist
+    * entry that needs to be located and updated.
+    * @param newEntry The new entry that needs to be located and updated in the watchlist.
+    * @param marketData MarketData is an object that contains information about the current market
+    * data. It is used in the updateOneItem method to update the information of the watchlist entry.
+    */
     public void locateEntry(List<Watchlist> existingWatchlist, UUID uuid, Watchlist newEntry, MarketData marketData) throws IOException {
         try {
             for(Watchlist watchlistEntry : existingWatchlist) {

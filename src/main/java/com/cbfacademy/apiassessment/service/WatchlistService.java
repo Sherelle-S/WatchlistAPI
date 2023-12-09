@@ -26,7 +26,7 @@ public interface WatchlistService {
 
     ResponseEntity<List<Watchlist>> searchByName(String stockName) throws InvalidInputException;
 
-    ResponseEntity<Void> updateEntry(UUID uuid, Watchlist newEntry);
+    ResponseEntity<Void> updateEntry(UUID uuid, Watchlist newEntry, MarketData marketData);
 
     ResponseEntity<List<Watchlist>> deleteWatchlistEntry(UUID uuid) throws IOException;
 

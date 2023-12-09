@@ -22,10 +22,11 @@ public class DeleteEntry {
 
     private static final Logger log = LoggerFactory.getLogger(DeleteEntry.class);
 
+    @Autowired
     public ReadExistingWatchlist readList;
+    @Autowired
     public WriteToJsonFile writeToJson;
 
-    @Autowired
     public DeleteEntry(ReadExistingWatchlist readList, WriteToJsonFile writeToJson) {
         this.readList = readList;
         this.writeToJson = writeToJson;

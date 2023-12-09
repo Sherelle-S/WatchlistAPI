@@ -22,16 +22,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cbfacademy.apiassessment.exceptions.InvalidInputException;
 import com.cbfacademy.apiassessment.exceptions.WatchlistDataAccessException;
+import com.cbfacademy.apiassessment.model.MarketData;
 import com.cbfacademy.apiassessment.model.Watchlist;
-import com.cbfacademy.apiassessment.repository.WatchlistRepository;
+import com.cbfacademy.apiassessment.repository.MongoWatchlistRepository;
 import com.cbfacademy.apiassessment.service.WatchlistService;
 
 // contains the controllers for CRUD request, maps them to the correct endpoint and gets Http responses.
-@RestController/**
+/**
  * The WatchlistController class is a Java class that handles requests related to the
  * watchlist feature and allows cross-origin requests from http://localhost:3000.
  */
-
+@RestController
 @RequestMapping("/watchlist")
 @CrossOrigin(origins = "http://localhost:3000")
 public class WatchlistController {
@@ -49,8 +50,8 @@ public class WatchlistController {
    // `MongoWatchlistRepository` into the `WatchlistController` class.
     @Autowired
     private WatchlistService service;
-    @Autowired
-    private WatchlistRepository repo;
+    // @Autowired
+    // private MongoWatchlistRepository repo;
 
    // The code `public WatchlistController(WatchlistService service) { this.service = service; }` is a
    // constructor for the `WatchlistController` class. It takes an instance of `WatchlistService` as a
@@ -66,7 +67,7 @@ public class WatchlistController {
     // shows all watchlist data 
     @GetMapping(value = "/")
     public ResponseEntity<List<Watchlist>> readWatchlist() throws WatchlistDataAccessException, ParseException {
-        repo.findAll();
+        // repo.findAll();
         return service.readWatchlist();
     }
 
@@ -79,7 +80,7 @@ public class WatchlistController {
    */
     @GetMapping(value = "/sortedWatchlist")
     public ResponseEntity<List<Watchlist>> sortedWatchlist() throws WatchlistDataAccessException, ParseException {
-        repo.findAll();
+        // repo.findAll();
         return service.sortedWatchlist();
     }
 
@@ -94,7 +95,7 @@ public class WatchlistController {
     @GetMapping(value = "/searchName/{name}")
     public ResponseEntity<List<Watchlist>> searchByName(@PathVariable String stockName) throws InvalidInputException{
         log.info("controller name is" + stockName );
-        List<Watchlist> result = repo.findByStockName(stockName);
+        // List<Watchlist> result = repo.findByStockName(stockName);
         return service.searchByName(stockName);
     }
 
@@ -107,9 +108,10 @@ public class WatchlistController {
     * @return The method is returning a ResponseEntity with a Void type.
     */
     @PostMapping(value = "/addEntry", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity <Void> create(@RequestBody List<Watchlist> watchlist) throws WatchlistDataAccessException{
-        repo.saveAll(watchlist);
-        return service.create(watchlist, null);      
+    public ResponseEntity <Void> create(@RequestBody List<Watchlist> watchlist, MarketData marketData) throws WatchlistDataAccessException{
+        
+        // repo.saveAll(watchlist);
+        return service.create(watchlist, marketData);      
         // create some logic that means if client already has stock of item of x name in watchlist, they cannot add another item of that stock they must instead update.
     }
 
@@ -118,8 +120,8 @@ public class WatchlistController {
     // maps to put routing searching by uuid 
     @PutMapping(value = "/updateEntry/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity <Void> updateEntry(@PathVariable UUID uuid, @RequestBody Watchlist newEntry){
-        repo.save(newEntry);
-        return service.updateEntry(uuid, newEntry);
+        // repo.save(newEntry);
+        return service.updateEntry(uuid, newEntry, newEntry);
     }
 
  // The code you provided is a method in the `WatchlistController` class that handles the DELETE
@@ -128,7 +130,7 @@ public class WatchlistController {
     @DeleteMapping(value = "/deleteEntry/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Watchlist>> deleteWatchlistEntry(@PathVariable UUID uuid) throws IOException{
         log.info("Delete process has begun");
-        repo.deleteById(uuid);
+        // repo.softDeleteWatchlistEntry(uuid);
         return service.deleteWatchlistEntry(uuid);
     }
 
@@ -138,10 +140,10 @@ public class WatchlistController {
    * 
    * @return The getAllWatchlist method is returning a List of Watchlist objects.
    */
-    @GetMapping("/watchlistM")
-    public List<Watchlist> getAllWatchlist(){
-        return repo.findAll();
-    }
+    // @GetMapping("/watchlistM")
+    // public List<Watchlist> getAllWatchlist(){
+    //     return repo.findAll();
+    // }
 
   /**
    * This function adds a new entry to the watchlist by saving it in the repository.
@@ -152,9 +154,9 @@ public class WatchlistController {
    * automatically
    * @return The method is returning a Watchlist object.
    */
-    @PostMapping("/addEntryM")
-    public Watchlist addWatchlist(@RequestBody Watchlist watchlist){
-        return repo.save(watchlist);
-    }
+    // @PostMapping("/addEntryM")
+    // public Watchlist addWatchlist(@RequestBody Watchlist watchlist){
+    //     return repo.save(watchlist);
+    // }
 }
     

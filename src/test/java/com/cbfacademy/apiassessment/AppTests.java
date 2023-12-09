@@ -87,9 +87,9 @@ class AppTests {
 	@Autowired
 	private TestRestTemplate restTemplate;
 
-	@Autowired
-	@Mock
-	private WriteToJsonFile writeToJson;
+	// @Autowired
+	// @Mock
+	// private WriteToJsonFile writeToJson;
 	@Autowired
 	@Mock
 	private ObjectMapper mapper;
@@ -157,59 +157,61 @@ class AppTests {
 		assertEquals("Hello World", response.getBody());
 	}
 
-	// 	@Test
-	// 	@Description("/greeting endpoint returns expected response for specified name parameter")
-	// 	public void greeting_ExpectedResponseWithNameParam() {
-	// 	ResponseEntity<String> response = restTemplate.getForEntity(base.toString() + "?name=John", String.class);
-	// 	assertEquals(200, response.getStatusCode().value());
-	// 	assertEquals("Hello John", response.getBody());
-	// }
+		@Test
+		@Description("/greeting endpoint returns expected response for specified name parameter")
+		public void greeting_ExpectedResponseWithNameParam() {
+		ResponseEntity<String> response = restTemplate.getForEntity(base.toString() + "?name=John", String.class);
+		assertEquals(200, response.getStatusCode().value());
+		assertEquals("Hello John", response.getBody());
+	}
 
-	// @Test
-	// @Description("/Create first entry writes to json")
-	// public void CreateFirstEntryWritesToJson(){
-	// 	List<Watchlist> emptyMockWatchlist = new ArrayList<>();
-	// 	try{
-	// 		Files.createFile(Paths.get(mockJsonFile));
-	// 		createFirstItem.CreateFirstEntry(emptyMockWatchlist, mockJsonFile);
-	// 		assertTrue(Files.exists(Paths.get(mockJsonFile)), "File should have been created");
-	// 	} catch (IOException e) {
-	// 		e.getMessage();
-	// 	}
-	// }
+	@Test
+	@Description("/Create first entry writes to json")
+	public void CreateFirstEntryWritesToJson(){
+		List<Watchlist> emptyMockWatchlist = new ArrayList<>();
+		MarketData mockMarketData = new MarketData();
+		try{
+			Files.createFile(Paths.get(mockJsonFile));
+			createFirstItem.CreateFirstEntry(emptyMockWatchlist, mockJsonFile, mockMarketData);
+			assertTrue(Files.exists(Paths.get(mockJsonFile)), "File should have been created");
+		} catch (IOException e) {
+			e.getMessage();
+		}
+	}
 
-	// @Test
-	// @Description("new watchlist entries are converted to a json object in addWatchlistItem")
-	// public void newWatchlistEntriesAreConvertedToAJsonWatchlistObject(){
-	// 	List<Watchlist> emptyMockWatchlist = new ArrayList<>();
-	// 	List<Watchlist> sampleMockWatchlist = new ArrayList<>();
+	@Test
+	@Description("new watchlist entries are converted to a json object in addWatchlistItem")
+	public void newWatchlistEntriesAreConvertedToAJsonWatchlistObject(){
+		List<Watchlist> emptyMockWatchlist = new ArrayList<>();
+		List<Watchlist> sampleMockWatchlist = new ArrayList<>();
+		MarketData mockMarketData = new MarketData();
 
-	// 	Watchlist sampleEntry = new Watchlist();
-	// 	sampleEntry.setUuid(null);
-	// 	sampleEntry.setStockName("Apple");
-	// 	sampleEntry.setSymbol("AAPL");
-	// 	sampleEntry.setCurrency("USD");
-	// 	sampleEntry.setDatePurchased(LocalDate.now());
+		Watchlist sampleEntry = new Watchlist();
+		sampleEntry.setUuid(null);
+		sampleEntry.setStockName("Apple");
+		sampleEntry.setSymbol("AAPL");
+		sampleEntry.setCurrency("USD");
+		sampleEntry.setDatePurchased(LocalDate.now());
 		
-	// 	BigDecimal purchasePrice = BigDecimal.valueOf(76.7);
-	// 	BigDecimal currentPrice = BigDecimal.valueOf(69.8);
-	// 	sampleEntry.setWantsVolStock(2340);
-	// 	sampleEntry.setOwnsVolStock(2110);
+		BigDecimal purchasePrice = BigDecimal.valueOf(76.7);
+		BigDecimal currentPrice = BigDecimal.valueOf(69.8);
+		sampleEntry.setWantsVolStock(2340);
+		sampleEntry.setOwnsVolStock(2110);
 		
-	// 	sampleEntry.setPurchasePrice(purchasePrice);
-	// 	sampleEntry.setCurrentPrice(currentPrice);
-	// 	sampleEntry.setProfit(BigDecimal.ZERO); // Use BigDecimal.ZERO for zero value
-	// 	sampleEntry.setPointsChange(0);
-	// 	sampleEntry.setOpen(354.2);
-	// 	sampleEntry.setPrevClose(234.0);
-	// 	sampleEntry.setIntradayHigh(356.2);
+		sampleEntry.setPurchasePrice(purchasePrice);
+		sampleEntry.setCurrentPrice(currentPrice);
+		sampleEntry.setProfit(BigDecimal.ZERO); // Use BigDecimal.ZERO for zero value
+		// sampleEntry.setPointsChange(0);
+		sampleEntry.setOpen(354.2);
+		sampleEntry.setPrevClose(234.0);
+		sampleEntry.setIntradayHigh(356.2);
 
-	// 	sampleMockWatchlist.add(sampleEntry);
+		sampleMockWatchlist.add(sampleEntry);
 
-	// addWatchlistItem.appendToWatchlist(emptyMockWatchlist, sampleMockWatchlist);
+	addWatchlistItem.appendToWatchlist(emptyMockWatchlist, sampleMockWatchlist, mockMarketData);
 
-	// verify(addWatchlistItem).appendToWatchlist(emptyMockWatchlist, sampleMockWatchlist);
-	// }
+	verify(addWatchlistItem).appendToWatchlist(emptyMockWatchlist, sampleMockWatchlist, mockMarketData);
+	}
 
 	// @Test
 	// @Description("/multiple watchlist entries are converted to json obtect")

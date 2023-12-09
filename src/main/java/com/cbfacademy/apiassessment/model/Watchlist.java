@@ -1,3 +1,8 @@
+/**
+ * The Watchlist class is a model that represents the structure of a watchlist for market data,
+ * including information such as stock name, symbol, currency, purchase details, profit, and deletion
+ * status.
+ */
 package com.cbfacademy.apiassessment.model;
 
 import java.math.BigDecimal;
@@ -10,6 +15,7 @@ import org.bson.types.ObjectId;
 import org.json.simple.JSONObject;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -37,7 +43,9 @@ public class Watchlist extends MarketData{
     private BigDecimal cumulativeProfit;
     private boolean isDeleted;
     private LocalDateTime deletedAt;
+    @Field("watchlistModelComponents")
     private ModelComponents modelComponents;
+    // private AIAdvice aIAdvice; this will ru a prompt through an AI device that shows this stock data through several iterations and ask it for advice on buying, selling or holding stock for profit.
 
     // empty watchlist
     public Watchlist() {
@@ -60,10 +68,11 @@ public class Watchlist extends MarketData{
         this.ownsVolStock = (Integer) json.get("ownsVolStock");
         this.wantsVolStock = (Integer) json.get("wantsVolStock");
         this.profit = (BigDecimal) json.get("profit");
-        // this.open = (double) json.get("open");
-        // this.close = (double) json.get("close");
-        // this.intradayHigh = (double) json.get("intradayHigh");
     }
+// The code you provided is a constructor for the Watchlist class. It initializes a Watchlist object
+// with the given parameters.
+// The code you provided is a constructor for the Watchlist class. It initializes a Watchlist object
+// with the given parameters.
 
     public Watchlist(BigDecimal currentPrice, double open, double prevClose, double intradayHigh, double intradayLow,
                 ObjectId id, UUID uuid, String stockName, String symbol, String currency, LocalDate datePurchased,
@@ -87,6 +96,11 @@ public class Watchlist extends MarketData{
             this.modelComponents = modelComponents;
         }
 
+       // The code you provided is a constructor for the Watchlist class that is used for updating an
+       // existing watchlist object. It takes in various parameters such as the current price, open
+       // price, previous close price, intraday high price, intraday low price, symbol, currency,
+       // volume of stocks wanted, volume of stocks owned, whether the stock is sold or not, date of
+       // sale, cumulative profit, and model components.
         // watchlist constructor for updating watchlist 
         public Watchlist(BigDecimal currentPrice, double open, double prevClose, double intradayHigh, double intradayLow,
             String symbol, String currency, Integer wantsVolStock, Integer ownsVolStock,
@@ -173,7 +187,13 @@ public class Watchlist extends MarketData{
     public BigDecimal getPurchasePrice() {
         return purchasePrice;
     }
+    
     // sets purchase price and calls calculate profit 
+   /**
+    * The function sets the purchase price and calculates the profit using the modelComponents object.
+    * 
+    * @param purchasePrice The purchase price of an item.
+    */
     public void setPurchasePrice(BigDecimal purchasePrice) {
         this.purchasePrice = purchasePrice;
         modelComponents.calculateProfit();
@@ -209,6 +229,12 @@ public class Watchlist extends MarketData{
         return cumulativeProfit;
     }
 
+    /**
+     * The function sets the cumulative profit and calculates it using the model components.
+     * 
+     * @param cumulativeProfit The cumulative profit is a BigDecimal value that represents the total
+     * profit earned over a period of time.
+     */
     public void setCumulativeProfit(BigDecimal cumulativeProfit) {
         modelComponents.calculateCumulativeProfit();
     }

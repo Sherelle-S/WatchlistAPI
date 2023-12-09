@@ -1,3 +1,8 @@
+/**
+ * The `RunUpdatingMethods` class is responsible for running all the actions required to update one
+ * entry in a watchlist, including reading the existing watchlist, updating the entry, and writing back
+ * to the JSON file.
+ */
 package com.cbfacademy.apiassessment.crudActions.appendingActions.updateOneEntry;
 
 import java.io.IOException;
@@ -18,6 +23,7 @@ import com.cbfacademy.apiassessment.crudActions.appendingActions.read.ReadExisti
 import com.cbfacademy.apiassessment.exceptions.ItemNotFoundException;
 import com.cbfacademy.apiassessment.model.MarketData;
 import com.cbfacademy.apiassessment.model.Watchlist;
+import com.cbfacademy.apiassessment.repository.MongoListService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
@@ -27,6 +33,7 @@ public class RunUpdatingMethods {
     private static final Logger log = LoggerFactory.getLogger(RunCreatingActions.class);
 
     @Autowired
+    private MongoListService mongoListService;
     // private AddWatchlistItem addEntry;
     private ObjectMapper mapper;
     private ReadExistingWatchlist readList;
@@ -50,6 +57,7 @@ public class RunUpdatingMethods {
             readList.readExistingWatchlist(jsonRepo, mapper);
             log.info("reader is working in run updating method");
             updateOneEntry.updateEntryViaUuid(watchlist, uuid, newEntry, marketData);
+            mongoListService.updateWatchlist(newEntry);
             writeToJson.writeToJson(jsonRepo, mapper, watchlist);
             log.info("Watchlist entry has successfully been updated.");
             return new ResponseEntity<>(HttpStatus.CREATED);
