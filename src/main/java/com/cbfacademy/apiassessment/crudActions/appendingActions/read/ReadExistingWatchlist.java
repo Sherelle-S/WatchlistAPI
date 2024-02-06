@@ -40,7 +40,7 @@ public class ReadExistingWatchlist {
             throw new ItemNotFoundException("jsonRepo could not be located.", e.getMessage());
         }   catch (IOException e) {
             log.error("IOException ocurred while trying to read jsonRepo.", e.getMessage());
-            throw new IOException("Json repo could not be.");
+            throw new IOException("Json repo could not be read.");
         }
     }
 }

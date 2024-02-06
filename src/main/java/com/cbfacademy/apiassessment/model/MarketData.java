@@ -3,7 +3,9 @@ package com.cbfacademy.apiassessment.model;
 import java.math.BigDecimal;
 
 import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.stereotype.Component;
 
 // Store watchlist inside of mongoDB watchlist collection
@@ -15,10 +17,17 @@ public class MarketData {
     private double prevClose;
     private double intradayHigh;
     private double intradayLow;
-    private ModelComponents modelComponents;
+    private Watchlist watchlist;
+    // @Field("marketDataModelComponent")
+    private ModelComponentInterface modelComponent;
 
     public MarketData() {
     }
+
+    public void setModelComponents(ModelComponentInterface modelComponent) {
+        this.modelComponent = modelComponent;
+    }
+    
 
     public MarketData(BigDecimal currentPrice, double open, double close, double intradayHigh, double intradayLow) {
         this.currentPrice = currentPrice; //if we use adjusted close price as current price
@@ -43,7 +52,9 @@ public class MarketData {
     // sets current price and calls calculate profit 
     public void setCurrentPrice(BigDecimal currentPrice) {
         this.currentPrice = currentPrice; //if we use adjusted close price as current price
-        modelComponents.calculateProfit();
+        if(modelComponent != null){
+            modelComponent.updatePrice();
+        }
     }
 
     public double getOpen() {
@@ -82,7 +93,7 @@ public class MarketData {
     @Override
     public String toString() {
         return "MarketData [currentPrice=" + currentPrice + ", open=" + open + ", close=" + prevClose + ", intradayHigh="
-                + intradayHigh + ", intradayLow=" + intradayLow + ", modelComponents=" + modelComponents + "]";
+                + intradayHigh + ", intradayLow=" + intradayLow + "]";
     }
     
 }

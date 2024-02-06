@@ -4,10 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-
 import com.cbfacademy.apiassessment.exceptions.InvalidInputException;
 import com.cbfacademy.apiassessment.exceptions.WatchlistDataAccessException;
 import com.cbfacademy.apiassessment.model.MarketData;

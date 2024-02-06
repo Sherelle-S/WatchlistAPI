@@ -33,7 +33,7 @@ public class DeleteEntry {
     }
 
    
-        private void deleteWatchlistItem(List<Watchlist> existingWatchlist, UUID uuid){
+        protected void deleteWatchlistItem(List<Watchlist> existingWatchlist, UUID uuid){
             Iterator<Watchlist> iterator = existingWatchlist.iterator();
             while(iterator.hasNext()){
                 Watchlist watchlistEntry = iterator.next();

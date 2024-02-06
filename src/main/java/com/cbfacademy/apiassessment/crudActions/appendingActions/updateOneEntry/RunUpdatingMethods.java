@@ -23,7 +23,7 @@ import com.cbfacademy.apiassessment.crudActions.appendingActions.read.ReadExisti
 import com.cbfacademy.apiassessment.exceptions.ItemNotFoundException;
 import com.cbfacademy.apiassessment.model.MarketData;
 import com.cbfacademy.apiassessment.model.Watchlist;
-import com.cbfacademy.apiassessment.repository.MongoListService;
+import com.cbfacademy.apiassessment.mongoRepository.MongoListService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 

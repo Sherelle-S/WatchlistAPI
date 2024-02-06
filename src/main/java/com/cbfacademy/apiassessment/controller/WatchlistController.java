@@ -8,6 +8,7 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,7 +25,7 @@ import com.cbfacademy.apiassessment.exceptions.InvalidInputException;
 import com.cbfacademy.apiassessment.exceptions.WatchlistDataAccessException;
 import com.cbfacademy.apiassessment.model.MarketData;
 import com.cbfacademy.apiassessment.model.Watchlist;
-import com.cbfacademy.apiassessment.repository.MongoWatchlistRepository;
+import com.cbfacademy.apiassessment.mongoRepository.MongoWatchlistRepository;
 import com.cbfacademy.apiassessment.service.WatchlistService;
 
 // contains the controllers for CRUD request, maps them to the correct endpoint and gets Http responses.
@@ -36,7 +37,6 @@ import com.cbfacademy.apiassessment.service.WatchlistService;
 @RequestMapping("/watchlist")
 @CrossOrigin(origins = "http://localhost:3000")
 public class WatchlistController {
-    
     
     // The line `private static final Logger log = LoggerFactory.getLogger(WatchlistController.class);`
     // is creating a logger object named `log` for the `WatchlistController` class. This logger is used
@@ -50,8 +50,9 @@ public class WatchlistController {
    // `MongoWatchlistRepository` into the `WatchlistController` class.
     @Autowired
     private WatchlistService service;
-    // @Autowired
-    // private MongoWatchlistRepository repo;
+    @Autowired
+    @Qualifier("mongoWatchlistRepository")
+    private MongoWatchlistRepository repo;
 
    // The code `public WatchlistController(WatchlistService service) { this.service = service; }` is a
    // constructor for the `WatchlistController` class. It takes an instance of `WatchlistService` as a
@@ -67,7 +68,7 @@ public class WatchlistController {
     // shows all watchlist data 
     @GetMapping(value = "/")
     public ResponseEntity<List<Watchlist>> readWatchlist() throws WatchlistDataAccessException, ParseException {
-        // repo.findAll();
+        repo.findAll();
         return service.readWatchlist();
     }
 
@@ -80,7 +81,7 @@ public class WatchlistController {
    */
     @GetMapping(value = "/sortedWatchlist")
     public ResponseEntity<List<Watchlist>> sortedWatchlist() throws WatchlistDataAccessException, ParseException {
-        // repo.findAll();
+        repo.findAll();
         return service.sortedWatchlist();
     }
 
@@ -92,7 +93,7 @@ public class WatchlistController {
    * @param stockName The stock name that is being searched for in the watchlist.
    * @return The method is returning a ResponseEntity object containing a List of Watchlist objects.
    */
-    @GetMapping(value = "/searchName/{name}")
+    @GetMapping(value = "/searchName/{stockName}")
     public ResponseEntity<List<Watchlist>> searchByName(@PathVariable String stockName) throws InvalidInputException{
         log.info("controller name is" + stockName );
         // List<Watchlist> result = repo.findByStockName(stockName);
@@ -110,7 +111,7 @@ public class WatchlistController {
     @PostMapping(value = "/addEntry", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity <Void> create(@RequestBody List<Watchlist> watchlist, MarketData marketData) throws WatchlistDataAccessException{
         
-        // repo.saveAll(watchlist);
+        repo.saveAll(watchlist);
         return service.create(watchlist, marketData);      
         // create some logic that means if client already has stock of item of x name in watchlist, they cannot add another item of that stock they must instead update.
     }
@@ -120,7 +121,7 @@ public class WatchlistController {
     // maps to put routing searching by uuid 
     @PutMapping(value = "/updateEntry/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity <Void> updateEntry(@PathVariable UUID uuid, @RequestBody Watchlist newEntry){
-        // repo.save(newEntry);
+        repo.save(newEntry);
         return service.updateEntry(uuid, newEntry, newEntry);
     }
 
@@ -130,7 +131,7 @@ public class WatchlistController {
     @DeleteMapping(value = "/deleteEntry/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Watchlist>> deleteWatchlistEntry(@PathVariable UUID uuid) throws IOException{
         log.info("Delete process has begun");
-        // repo.softDeleteWatchlistEntry(uuid);
+        repo.deleteByUuid(uuid);
         return service.deleteWatchlistEntry(uuid);
     }
 

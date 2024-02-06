@@ -15,7 +15,6 @@ import org.bson.types.ObjectId;
 import org.json.simple.JSONObject;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -23,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 // model that shows the structure for the watchlist
 @Document(collection = "Watchlist")
 @Component
-public class Watchlist extends MarketData{
+public class Watchlist extends MarketData implements ModelComponentInterface{
 
     @Id
     private ObjectId id;
@@ -43,10 +42,17 @@ public class Watchlist extends MarketData{
     private BigDecimal cumulativeProfit;
     private boolean isDeleted;
     private LocalDateTime deletedAt;
-    @Field("watchlistModelComponents")
-    private ModelComponents modelComponents;
+    // @Field("watchlist modelComponent")
+    // private ModelComponentInterface modelComponent;
+    // @Field("watchlistModelComponent")
     // private AIAdvice aIAdvice; this will ru a prompt through an AI device that shows this stock data through several iterations and ask it for advice on buying, selling or holding stock for profit.
 
+    
+    // @Autowired
+    // public Watchlist(ModelComponentInterface modelComponent) {
+    //     this.modelComponent = modelComponent;
+    // }
+    
     // empty watchlist
     public Watchlist() {
     }
@@ -54,6 +60,7 @@ public class Watchlist extends MarketData{
     // generating uuid with this constructor and implementing the logic so that it is generated if uuid is null
     // Initializes watchlist object from json data
         public Watchlist(JSONObject json){
+            
             Object uuidObj = json.get("uuid");
             if (uuidObj instanceof String) {
                 this.uuid = UUID.fromString((String) uuidObj);
@@ -74,11 +81,10 @@ public class Watchlist extends MarketData{
 // The code you provided is a constructor for the Watchlist class. It initializes a Watchlist object
 // with the given parameters.
 
-    public Watchlist(BigDecimal currentPrice, double open, double prevClose, double intradayHigh, double intradayLow,
-                ObjectId id, UUID uuid, String stockName, String symbol, String currency, LocalDate datePurchased,
+    public Watchlist(BigDecimal currentPrice, double open, double prevClose, double intradayHigh, double intradayLow, ObjectId id, UUID uuid, String stockName, String symbol, String currency, LocalDate datePurchased,
                 Integer wantsVolStock, Integer ownsVolStock, BigDecimal purchasePrice, BigDecimal profit,
              BigDecimal cumulativeProfit,
-                boolean isDeleted, LocalDateTime deletedAt, ModelComponents modelComponents) {
+                boolean isDeleted, LocalDateTime deletedAt) {
             super(currentPrice, open, prevClose, intradayHigh, intradayLow);
             this.id = id;
             this.uuid = (uuid == null) ? UUID.randomUUID() : uuid;
@@ -93,7 +99,6 @@ public class Watchlist extends MarketData{
             this.cumulativeProfit = cumulativeProfit;
             this.isDeleted = isDeleted;
             this.deletedAt = deletedAt;
-            this.modelComponents = modelComponents;
         }
 
        // The code you provided is a constructor for the Watchlist class that is used for updating an
@@ -104,7 +109,7 @@ public class Watchlist extends MarketData{
         // watchlist constructor for updating watchlist 
         public Watchlist(BigDecimal currentPrice, double open, double prevClose, double intradayHigh, double intradayLow,
             String symbol, String currency, Integer wantsVolStock, Integer ownsVolStock,
-            boolean isSold, LocalDate dateSold, BigDecimal cumulativeProfit, ModelComponents modelComponents) {
+            boolean isSold, LocalDate dateSold, BigDecimal cumulativeProfit) {
         super(currentPrice, open, prevClose, intradayHigh, intradayLow);
         this.symbol = symbol;
         this.currency = currency;
@@ -113,9 +118,23 @@ public class Watchlist extends MarketData{
         this.isSold = isSold;
         this.dateSold = dateSold;
         this.cumulativeProfit = cumulativeProfit;
-        this.modelComponents = modelComponents;
     }
 
+    public Watchlist(String symbol, String stockName, String currency){
+        this.symbol = symbol;
+        this.stockName = stockName;
+        this.currency = currency;
+    }
+
+    //  @Autowired
+    // public void setModelComponents(ModelComponentInterface modelComponent) {
+    //     this.modelComponent = modelComponent;
+    // }
+
+    @Override
+    public void updatePrice() {
+        calculateProfit();
+    }
 
     public ObjectId getId() {
         return id;
@@ -171,17 +190,17 @@ public class Watchlist extends MarketData{
         return ownsVolStock;
     }
 
-    public void setOwnsVolStock(Integer has) {
-        this.ownsVolStock = has;
-        modelComponents.calculateProfit();
+    public void setOwnsVolStock(Integer ownsVolStock) {
+        this.ownsVolStock = ownsVolStock;
+        calculateProfit();
     }
 
     public Integer getWantsVolStock() {
         return wantsVolStock;
     }
 
-    public void setWantsVolStock(Integer wants) {
-        this.wantsVolStock = wants;
+    public void setWantsVolStock(Integer wantsVolStock) {
+        this.wantsVolStock = wantsVolStock;
     }
 
     public BigDecimal getPurchasePrice() {
@@ -190,13 +209,13 @@ public class Watchlist extends MarketData{
     
     // sets purchase price and calls calculate profit 
    /**
-    * The function sets the purchase price and calculates the profit using the modelComponents object.
+    * The function sets the purchase price and calculates the profit using the  object.
     * 
     * @param purchasePrice The purchase price of an item.
     */
     public void setPurchasePrice(BigDecimal purchasePrice) {
         this.purchasePrice = purchasePrice;
-        modelComponents.calculateProfit();
+        calculateProfit();
     }
    
     public BigDecimal getProfit() {
@@ -204,7 +223,10 @@ public class Watchlist extends MarketData{
     }
     
     public void setProfit(BigDecimal profit){
-        modelComponents.calculateProfit();
+        if (this.profit == null || !this.profit.equals(profit)) {
+            this.profit = profit;
+        calculateCumulativeProfit();
+        }
     }
 
     // calculates profit based on user inputs
@@ -236,8 +258,10 @@ public class Watchlist extends MarketData{
      * profit earned over a period of time.
      */
     public void setCumulativeProfit(BigDecimal cumulativeProfit) {
-        modelComponents.calculateCumulativeProfit();
+        calculateCumulativeProfit();
+        
     }
+    
 
     public boolean isDeleted() {
         return isDeleted;
@@ -255,14 +279,73 @@ public class Watchlist extends MarketData{
         this.deletedAt = deletedAt;
     }
 
+    public void calculateProfit() {
+        if (
+          getCurrentPrice() != null &&
+          getPurchasePrice() != null &&
+          getOwnsVolStock() != null
+        ) {
+          BigDecimal currentPrice = getCurrentPrice();
+          BigDecimal purchasePrice = getPurchasePrice();
+          BigDecimal ownsVolStock = BigDecimal.valueOf(getOwnsVolStock());
+          BigDecimal calculatedProfit = currentPrice.subtract(purchasePrice).multiply(ownsVolStock);
+          
+          // Only set the profit if it has changed
+          if (this.profit == null || !this.profit.equals(calculatedProfit)) {
+              setProfit(calculatedProfit);
+          }
+        } else {
+          // Handle null values, set profit to 0
+          setProfit(BigDecimal.ZERO);
+        }
+    }
+    
+    // public void setCumulativeProfit(BigDecimal cumulativeProfit) {
+    //     if (this.cumulativeProfit == null || !this.cumulativeProfit.equals(cumulativeProfit)) {
+    //         this.cumulativeProfit = cumulativeProfit;
+    //         // Update the cumulative profit without invoking the setCumulativeProfit method
+    //         recalculateCumulativeProfit();
+    //     }
+    // }
+    
+    // private void recalculateCumulativeProfit() {
+    //     BigDecimal currentProfit = getProfit();
+    //     if (currentProfit != null && getCumulativeProfit() != null) {
+    //         BigDecimal newCumulativeProfit = getCumulativeProfit().add(currentProfit);
+    //         if (!newCumulativeProfit.equals(getCumulativeProfit())) {
+    //             // Update the cumulative profit directly without invoking setCumulativeProfit
+    //             this.cumulativeProfit = newCumulativeProfit;
+    //             // Recalculate if needed
+    //             recalculateCumulativeProfit();
+    //         }
+    //     } else if (currentProfit != null) {
+    //         // Set the cumulative profit directly without invoking setCumulativeProfit
+    //         this.cumulativeProfit = currentProfit;
+    //     }
+    // }
+      private void calculateCumulativeProfit() {
+        BigDecimal currentProfit = getProfit();
+        if (currentProfit != null && getCumulativeProfit() != null) {
+            BigDecimal newCumulativeProfit = getCumulativeProfit().add(currentProfit);
+            if(!newCumulativeProfit.equals(getCumulativeProfit())){
+    //             setCumulativeProfit(newCumulativeProfit);
+    this.cumulativeProfit = newCumulativeProfit;
+            }
+        } else if (currentProfit != null) {
+            // setCumulativeProfit(currentProfit);
+            this.cumulativeProfit = currentProfit;
+
+        }
+        // return getCumulativeProfit();
+    }
+
     @Override
     public String toString() {
         return "Watchlist [id=" + id + ", uuid=" + uuid + ", stockName=" + stockName + ", symbol=" + symbol
                 + ", currency=" + currency + ", datePurchased=" + datePurchased + ", wantsVolStock=" + wantsVolStock
                 + ", ownsVolStock=" + ownsVolStock + ", purchasePrice=" + purchasePrice + ", profit=" + profit
                 + ", isSold=" + isSold + ", dateSold=" + dateSold + ", cumulativeProfit=" + cumulativeProfit
-                + ", isDeleted=" + isDeleted + ", deletedAt=" + deletedAt + ", modelComponents=" + modelComponents
-                + "]";
+                + ", isDeleted=" + isDeleted + ", deletedAt=" + deletedAt + "]";
     }
 
   

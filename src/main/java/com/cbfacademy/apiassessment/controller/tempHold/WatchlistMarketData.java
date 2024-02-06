@@ -2,7 +2,7 @@
  * The WatchlistMarketData class is a model class used for mapping data to a MongoDB collection named
  * "WatchlistMarketData".
  */
-package com.cbfacademy.apiassessment.model;
+package com.cbfacademy.apiassessment.controller.tempHold;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 

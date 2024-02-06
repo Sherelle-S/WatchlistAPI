@@ -1,4 +1,4 @@
-package com.cbfacademy.apiassessment.repository;
+package com.cbfacademy.apiassessment.mongoRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,8 +22,10 @@ import com.cbfacademy.apiassessment.exceptions.InvalidInputException;
 import com.cbfacademy.apiassessment.exceptions.ItemNotFoundException;
 import com.cbfacademy.apiassessment.exceptions.WatchlistDataAccessException;
 import com.cbfacademy.apiassessment.externalApi.AlphaVantageConfig;
+import com.cbfacademy.apiassessment.externalApi.AlphaVantageService;
 import com.cbfacademy.apiassessment.model.MarketData;
 import com.cbfacademy.apiassessment.model.Watchlist;
+
 @Service
 public class MongoListService implements MongoWatchlistRepository{
 
@@ -32,6 +34,8 @@ public class MongoListService implements MongoWatchlistRepository{
     private AlphaVantageConfig alphaVantageConfig;
     @Autowired
     private MongoWatchlistRepository repository;
+    // @Autowired
+    // private AlphaVantageService alphaService;
     
 
     public MongoListService(AlphaVantageConfig alphaVantageConfig) {
@@ -51,7 +55,48 @@ public void saveWatchlist(List<Watchlist> watchlist) {
     repository.saveAll(watchlist);
 }
 
+// @Override
+// public void createWatchlist (Watchlist watchlist, MarketData marketData) throws InvalidInputException {
+//     if (watchlist.getUuid() != null) {
+//         Optional<Watchlist> newWatchlistOptional = repository.findById(watchlist.getUuid());
 
+//         if (newWatchlistOptional.isPresent()) {
+//             Watchlist newWatchlist = newWatchlistOptional.get();
+            
+//             // Update fields that need to be changed
+//             newWatchlist.setSymbol(watchlist.getSymbol());
+//             newWatchlist.setCurrency(watchlist.getCurrency());
+//             newWatchlist.setOwnsVolStock(watchlist.getOwnsVolStock());
+//             newWatchlist.setWantsVolStock(watchlist.getWantsVolStock());
+//             newWatchlist.setCurrentPrice(watchlist.getCurrentPrice());
+//             newWatchlist.setProfit(watchlist.getProfit());
+//             newWatchlist.setCumulativeProfit(watchlist.getCumulativeProfit());
+                     
+//             try {
+//                 alphaService.getMarketData(watchlist.getSymbol());
+//                  newWatchlist.setCurrentPrice(marketData.getCurrentPrice());
+//             newWatchlist.setOpen(marketData.getOpen());
+//             newWatchlist.setPrevClose(marketData.getPrevClose());
+//             newWatchlist.setIntradayHigh(marketData.getIntradayHigh());
+//             log.info("object with existing data has been created.");
+//             } catch (ExternalAPIResponseUnavailable e) {
+//                 log.error("Unable to retrieve data from AlphaVantageAPI.", e.getMessage());
+//                 e.printStackTrace();
+//             } catch (org.json.simple.parser.ParseException e) {
+//                 e.printStackTrace();
+//                 log.error("Problem ocurred while attempting to retrieve data from AlphaVanage API", e.getMessage());
+//             }
+            
+//             repository.save(newWatchlist);
+//         } else {
+//             log.error("Watchlist item with ID {} not found", watchlist.getUuid());
+//             throw new ItemNotFoundException("Entry with the id that you are trying to update cannot be located.");
+//         }
+//     } else {
+//         log.error("Invalid Watchlist ID provided");
+//         throw new InvalidInputException("You have entered an invalid input.");
+//     }
+// }
 
 public void updateWatchlist(Watchlist watchlist) throws InvalidInputException {
     if (watchlist.getId() != null) {

@@ -1,4 +1,4 @@
-package com.cbfacademy.apiassessment.repository;
+package com.cbfacademy.apiassessment.mongoRepository;
 
 import com.cbfacademy.apiassessment.model.MarketData;
 import org.springframework.data.mongodb.repository.MongoRepository;

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.cbfacademy.apiassessment.exceptions.ItemNotFoundException;
 import com.cbfacademy.apiassessment.model.Watchlist;
-import com.cbfacademy.apiassessment.repository.MongoListService;
+import com.cbfacademy.apiassessment.mongoRepository.MongoListService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 // runs combined components necessary to delete an entry to watchlist

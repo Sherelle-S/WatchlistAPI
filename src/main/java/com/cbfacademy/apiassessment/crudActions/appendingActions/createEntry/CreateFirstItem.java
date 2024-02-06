@@ -17,7 +17,7 @@ import com.cbfacademy.apiassessment.exceptions.WatchlistDataAccessException;
 import com.cbfacademy.apiassessment.exceptions.WatchlistProcessingException;
 import com.cbfacademy.apiassessment.model.MarketData;
 import com.cbfacademy.apiassessment.model.Watchlist;
-import com.cbfacademy.apiassessment.repository.MongoListService;
+import com.cbfacademy.apiassessment.mongoRepository.MongoListService;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -37,6 +37,7 @@ public class CreateFirstItem {
     @Autowired
     private WriteToJsonFile writeToJson;
 
+    @Autowired
     public CreateFirstItem(AddWatchlistItem addWatchlistItem, ObjectMapper mapper, WriteToJsonFile writeToJson) {
         this.addWatchlistItem = addWatchlistItem;
         // registerModule(new JavaTimeModule()) must always be registered at the same time is object mapper or code will be broken due to problem with Java 8 
